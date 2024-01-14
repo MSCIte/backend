@@ -1,0 +1,41 @@
+from typing import Optional, Annotated
+from fastapi_camelcase import CamelModel
+from fastapi import Depends
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
+from sqlalchemy.orm import relationship
+
+from .database import Base
+
+
+course_prerequisites = Table('course_prerequisites', Base.metadata,
+   Column('course_id', Integer, ForeignKey('courses.id')),
+   Column('prerequisite_id', Integer, ForeignKey('courses.id'))
+)
+
+course_antirequisites = Table('course_antirequisites', Base.metadata,
+   Column('course_id', Integer, ForeignKey('courses.id')),
+   Column('antirequisite_id', Integer, ForeignKey('courses.id'))
+)
+
+
+
+class Course(Base):
+    __tablename__ = 'courses'
+    id = Column(Integer, primary_key=True)
+    course_code: Column(String, unique=True, index=True)
+    course_name: Column(String, unique=True, index=True)
+    credit: Column(Integer, unique=False, index=True)
+    description: Column(String, index=True)
+    location: Column(String, unique=True, index=True)
+    prerequisites = relationship("Course", secondary="course_prerequisites")
+    antirequisites = relationship("Course", secondary="course_antirequisites")
+
+
+class Options(Base):
+    __tablename__ = 'options'
+    option_name: Column(String, index=True)
+
+
+class EngineeringDiscipline(Base):
+    __tablename__ = 'engineering_discipline'
+    discipline_name: Column(String, unique=True, index=True)
