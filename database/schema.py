@@ -1,23 +1,32 @@
 from typing import Optional, Annotated
 from fastapi import Depends
 import database
-from sqlalchemy.orm import Mapped
+from pydantic import BaseModel
 
 
-class Course(database.Base):
-    course_code: Mapped[str]
-    course_name: Mapped[str]
-    credit: Mapped[int]
-    description: Mapped[str]
-    location: Mapped[str]
+class Course(BaseModel):
+    course_code: str
+    course_name: str
+    credit: int
+    description: str
+    location: str
+
+    class Config:
+        from_attributes = True
 
 
-class Options(database.Base):
-    option_name: Mapped[str]
+class Options(BaseModel):
+    option_name: str
+
+    class Config:
+        from_attributes = True
 
 
-class EngineeringDiscipline(database.Base):
-    discipline_name: Mapped[str]
+class EngineeringDiscipline(BaseModel):
+    discipline_name: str
+
+    class Config:
+        from_attributes = True
 
 
 

@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -27,6 +28,10 @@ target_metadata = models.Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+# here we allow ourselves to pass interpolation vars to alembic.ini
+# fron the host env
+section = config.config_ini_section
+config.set_section_option(section, "SQLALCHEMY_DATABASE_URL", os.environ.get("SQLALCHEMY_DATABASE_URL"))
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
