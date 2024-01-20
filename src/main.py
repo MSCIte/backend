@@ -14,7 +14,7 @@ def read_root():
 
 @app.get("/query")
 def read_item():
-    url = 'https://openapi.data.uwaterloo.ca/v3/courses/1241'
+    url = 'https://openapi.data.uwaterloo.ca/v3/subjects'
     api_key = '2FEF9C75B2F34CAF91CC3B6DF0D6C6C0'
     header = {'x-api-key': api_key}
     
