@@ -24,7 +24,7 @@ class Course(Base):
     __allow_unmapped__ = True
     __tablename__ = 'courses'
     id = Column(Integer, primary_key=True)
-    course_code = Column(String, unique=False, index=True)
+    course_code = Column(String, unique=True, index=True)
     course_name = Column(String, unique=False, index=True)
     credit = Column(Integer, unique=False, index=True)
     description = Column(String, index=True)

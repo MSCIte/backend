@@ -310,21 +310,21 @@ def load_prereqs(prereqs, course_code=""):
         # return False
 
 # Examples
-examples = [
-    "Actuarial Science Masters Students",
-    "Antireq: AE 121, BME 121, CS 115, 137, 138, 145, CIVE 121, ECE 150, ME 101, MSCI 121, PHYS 236, SYDE 121",
-    "Antireq: AFM 231/LS 283, ECE 290; (For Mathematics students only) BUS 231W, CIVE 491, ENVS 201, GENE 411, ME 401, MTHEL 100",
-    "Coreq: CHEM 120. Antireq: CHEM 121L",
-    "Pre/Co-req: ECE 650 or 750 Tpc 26, or instructor consent. Antireq: ECE 355, ECE 451, CS 445, CS 645, SE 463, ECE 452, CS 446, CS 646, SE 464",
-    "Prereq/coreq: ECE 650 or 750 Tpc 26 or instructor consent. Antireq: CS 447, 647, ECE 453, SE 465",
-    "Prereq: ((MATH 106 with a grade of at least 70% or MATH 136 or 146) and (MATH 135 with a grade of at least 60% or MATH 145)) or level at least 2A Software Engineering; Honours Mathematics students only. Antireq: CO 220, MATH 229, 249",
-    "Prereq: (CHEM 233 or 237), 360; Antireq: CHEM 482"
-]
+# examples = [
+#     "Actuarial Science Masters Students",
+#     "Antireq: AE 121, BME 121, CS 115, 137, 138, 145, CIVE 121, ECE 150, ME 101, MSCI 121, PHYS 236, SYDE 121",
+#     "Antireq: AFM 231/LS 283, ECE 290; (For Mathematics students only) BUS 231W, CIVE 491, ENVS 201, GENE 411, ME 401, MTHEL 100",
+#     "Coreq: CHEM 120. Antireq: CHEM 121L",
+#     "Pre/Co-req: ECE 650 or 750 Tpc 26, or instructor consent. Antireq: ECE 355, ECE 451, CS 445, CS 645, SE 463, ECE 452, CS 446, CS 646, SE 464",
+#     "Prereq/coreq: ECE 650 or 750 Tpc 26 or instructor consent. Antireq: CS 447, 647, ECE 453, SE 465",
+#     "Prereq: ((MATH 106 with a grade of at least 70% or MATH 136 or 146) and (MATH 135 with a grade of at least 60% or MATH 145)) or level at least 2A Software Engineering; Honours Mathematics students only. Antireq: CO 220, MATH 229, 249",
+#     "Prereq: (CHEM 233 or 237), 360; Antireq: CHEM 482"
+# ]
 
 # Parse and print results
-for example in examples:
-    result = load_prereqs(example)
-    print(result)
+# for example in examples:
+#     result = load_prereqs(example)
+#     print(result)
     
 
 # def clean():
@@ -343,9 +343,9 @@ for example in examples:
 
 def build_requirements_dict():
     requirements_dict = {}
-    with open('./data/parsed_requirements_low_temp.tsv','r') as tsv:
+    with open('./data/parsed_requirements.tsv','r') as tsv:
         for line in csv.reader(tsv, delimiter='\t'):
-            print(line)
+            # print(line)
 
             requirements_dict[line[0]] = eval(line[1])
     return requirements_dict
@@ -357,15 +357,27 @@ def add_data_to_db(db: Session):
 
         cur.execute(
             """
-            SELECT subjectCode, catalogNumber, title, description, requirementsDescription
+            WITH RankedCourses AS (
+            SELECT
+                subjectCode,
+                catalogNumber,
+                termCode,
+                title, 
+                description, 
+                requirementsDescription,
+                ROW_NUMBER() OVER (PARTITION BY subjectCode, catalogNumber ORDER BY termCode DESC) AS rn
             FROM courses
+            )
+            SELECT *
+            FROM RankedCourses
+            WHERE rn = 1;
             """
         )
         for i, row in enumerate(cur):
             course_code = row[0] + row[1]
-            course_name = row[2]
-            description = row[3]
-            requirements_description = row[4]
+            course_name = row[3]
+            description = row[4]
+            requirements_description = row[5]
             parsed_requirements = requirements_dict.get(requirements_description, '')
             course = models.Course(course_code=course_code, course_name=course_name, description=description)
             db.add(course)
@@ -373,6 +385,6 @@ def add_data_to_db(db: Session):
                 db.commit()
                 print("committed ", str(i), " entries to the db")
 
-# db = SessionLocal() 
-# add_data_to_db(db)
+db = SessionLocal() 
+add_data_to_db(db)
 
