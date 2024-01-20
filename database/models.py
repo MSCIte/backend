@@ -2,23 +2,24 @@ from typing import Optional, Annotated
 from fastapi import Depends
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
-
-from database import Base
+from sqladmin import Admin, ModelView
+from database.database import Base
 
 course_prerequisites = Table('course_prerequisites', Base.metadata,
-   Column('course_id', Integer, ForeignKey('courses.id')),
-   Column('prerequisite_id', Integer, ForeignKey('courses.id'))
-)
+                             Column('course_id', Integer, ForeignKey('courses.id')),
+                             Column('prerequisite_id', Integer, ForeignKey('courses.id'))
+                             )
 
 course_antirequisites = Table('course_antirequisites', Base.metadata,
-   Column('course_id', Integer, ForeignKey('courses.id')),
-   Column('antirequisite_id', Integer, ForeignKey('courses.id'))
-)
+                              Column('course_id', Integer, ForeignKey('courses.id')),
+                              Column('antirequisite_id', Integer, ForeignKey('courses.id'))
+                              )
 
 course_corequisites = Table('course_corequisites', Base.metadata,
-   Column('course_id', Integer, ForeignKey('courses.id')),
-   Column('corequisite_id', Integer, ForeignKey('courses.id'))
-)
+                            Column('course_id', Integer, ForeignKey('courses.id')),
+                            Column('corequisite_id', Integer, ForeignKey('courses.id'))
+                            )
+
 
 class Course(Base):
     __allow_unmapped__ = True
