@@ -2,23 +2,8 @@ from typing import Optional, Annotated
 from fastapi import Depends
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
-from sqladmin import Admin, ModelView
-from db.database import Base
 
-course_prerequisites = Table('course_prerequisites', Base.metadata,
-                             Column('course_id', Integer, ForeignKey('courses.id')),
-                             Column('prerequisite_id', Integer, ForeignKey('courses.id'))
-                             )
-
-course_antirequisites = Table('course_antirequisites', Base.metadata,
-                              Column('course_id', Integer, ForeignKey('courses.id')),
-                              Column('antirequisite_id', Integer, ForeignKey('courses.id'))
-                              )
-
-course_corequisites = Table('course_corequisites', Base.metadata,
-                            Column('course_id', Integer, ForeignKey('courses.id')),
-                            Column('corequisite_id', Integer, ForeignKey('courses.id'))
-                            )
+from .database import Base
 
 
 class Course(Base):
@@ -30,29 +15,11 @@ class Course(Base):
     credit = Column(Integer, unique=False, index=True)
     description = Column(String, index=True)
     location = Column(String, unique=True, index=True)
-    prerequisites = relationship(
-        "Course",
-        secondary="course_prerequisites",
-        primaryjoin="Course.id==course_prerequisites.c.course_id",
-        secondaryjoin="Course.id==course_prerequisites.c.prerequisite_id",
-        backref="prerequisite_of",
-    )
+    requirements_description = Column(String, unique=False)
+    prerequisites = Column(String, unique=False, index=True)
+    antirequisites = Column(String, unique=False, index=True)
+    corequisites = Column(String, unique=False, index=True)
 
-    antirequisites = relationship(
-        "Course",
-        secondary="course_antirequisites",
-        primaryjoin="Course.id==course_antirequisites.c.course_id",
-        secondaryjoin="Course.id==course_antirequisites.c.antirequisite_id",
-        backref="antirequisite_of",
-    )
-
-    corequisites = relationship(
-        "Course",
-        secondary="course_corequisites",
-        primaryjoin="Course.id==course_corequisites.c.course_id",
-        secondaryjoin="Course.id==course_corequisites.c.corequisite_id",
-        backref="corequisite_of",
-    )
 
 
 class Options(Base):
@@ -67,3 +34,22 @@ class EngineeringDiscipline(Base):
     __tablename__ = 'engineering_discipline'
     id = Column(Integer, primary_key=True)
     discipline_name = Column(String, unique=True, index=True)
+
+class Prerequisite(Base):
+    __allow_unmapped__ = True
+    __tablename__ = 'prerequisites'
+    id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey('courses.id'))
+    logic = Column('logic', String, unique=False, index=True)
+    courses =Column('courses', String, unique=False, index=True)
+    min_level = Column('min_level', String, unique=False, index=True)
+    
+
+class Antirequisite(Base):
+    __allow_unmapped__ = True
+    __tablename__ = 'antirequisites'
+    id = Column(Integer, primary_key=True)
+    course_id = Column('course_id', Integer, ForeignKey('courses.id'))
+    courses = Column('courses', String, unique=False, index=True)
+    extra_info = Column('extra_info', String, unique=False)
+

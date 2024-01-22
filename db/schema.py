@@ -29,5 +29,12 @@ class EngineeringDiscipline(BaseModel):
         from_attributes = True
 
 
+class Prerequisite(BaseModel): 
+    logic: str
+    courses: str
+    min_level: str
+
+    class Config:
+        from_attributes = True
 
 

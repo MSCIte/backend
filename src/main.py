@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 import requests
+from db.models import Course, Prerequisite, Antirequisite
+from db.database import SessionLocal
+from db.data_to_db import add_data_to_db
 from sqladmin import Admin
 from db import engine
 from db.admin import admin_views
 
-
-print("==ENGINE", engine)
 
 app = FastAPI()
 
@@ -17,6 +18,11 @@ for view in admin_views:
 
 @app.get("/")
 def read_root():
+    print("WE HAVE A SESSION")
+    db = SessionLocal() 
+    print("LETLS Add to DB")
+    add_data_to_db(db)
+    
     return {"Hello": "World"}
 
 
