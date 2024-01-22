@@ -1,13 +1,19 @@
-from typing import Union
-
 from fastapi import FastAPI
-import os
 import requests
 from db.models import Course, Prerequisite, Antirequisite
 from db.database import SessionLocal
 from db.data_to_db import add_data_to_db
+from sqladmin import Admin
+from db import engine
+from db.admin import admin_views
+
 
 app = FastAPI()
+
+# Admin dashboard
+admin = Admin(app, engine)
+for view in admin_views:
+    admin.add_view(view)
 
 
 @app.get("/")
@@ -25,12 +31,11 @@ def read_item():
     url = 'https://openapi.data.uwaterloo.ca/v3/subjects'
     api_key = '2FEF9C75B2F34CAF91CC3B6DF0D6C6C0'
     header = {'x-api-key': api_key}
-    
 
     response = requests.get(url, headers=header)
     return response.json()
 
-#Yoinked from uw flow
+# Yoinked from uw flow
 # def normalize_reqs_str(str_):
 #     """Normalize the prereq string of a course
 

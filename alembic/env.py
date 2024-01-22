@@ -5,8 +5,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-
-from database import models
+from dotenv import dotenv_values
+from db import models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,11 +27,24 @@ target_metadata = models.Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+environment = config.get_main_option("ENV")
 
 # here we allow ourselves to pass interpolation vars to alembic.ini
-# fron the host env
+# from the host env
 section = config.config_ini_section
-config.set_section_option(section, "SQLALCHEMY_DATABASE_URL", os.environ.get("SQLALCHEMY_DATABASE_URL"))
+
+if environment == "production":
+    specific_to_env_vars = ".env.prod"
+else:  # development
+    specific_to_env_vars = ".env.dev"
+
+env = {
+    **dotenv_values(".env.shared"),  # load shared development variables
+    **dotenv_values(specific_to_env_vars),  # dev vars
+    **os.environ,  # override loaded values with environment variables
+}
+config.set_section_option(section, "SQLALCHEMY_DATABASE_URL", env["SQLALCHEMY_DATABASE_URL"])
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

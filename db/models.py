@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 
 from .database import Base
 
+
 class Course(Base):
     __allow_unmapped__ = True
     __tablename__ = 'courses'
@@ -20,6 +21,7 @@ class Course(Base):
     corequisites = Column(String, unique=False, index=True)
 
 
+
 class Options(Base):
     __allow_unmapped__ = True
     __tablename__ = 'options'
@@ -32,7 +34,6 @@ class EngineeringDiscipline(Base):
     __tablename__ = 'engineering_discipline'
     id = Column(Integer, primary_key=True)
     discipline_name = Column(String, unique=True, index=True)
-
 
 class Prerequisite(Base):
     __allow_unmapped__ = True
@@ -51,3 +52,4 @@ class Antirequisite(Base):
     course_id = Column('course_id', Integer, ForeignKey('courses.id'))
     courses = Column('courses', String, unique=False, index=True)
     extra_info = Column('extra_info', String, unique=False)
+
