@@ -469,62 +469,55 @@ def str(self, flag="prereqs"):
     return output
 
 
-class Antireqs:
-    def __init__(self):
-        self.antireqs = []
-        self.extra_info = ""
+def load_antireqs(antireqs):
+    antireqs = antireqs.replace("Antireq: ", "")
+    antireqs = re.sub("[0-9]{3}[0-9]", "", antireqs)
+    antireqs = re.sub("[a-zA-Z\\-]*[a-z][a-zA-Z\\-]*", "", antireqs)
 
-    def load_antireqs(self, antireqs):
-        if isinstance(antireqs, str):
-            antireqs = antireqs.replace("Antireq: ", "")
-            antireqs = re.sub("[0-9]{3}[0-9]", "", antireqs)
-            antireqs = re.sub("[a-zA-Z\\-]*[a-z][a-zA-Z\\-]*", "", antireqs)
+    for _ in range(1):
+        antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3})([A-Z])\\s*/\\s*([A-Z])",
+                            r"\1 \2\3, \1 \2\4", antireqs)
+        antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)(?:\\s*/\\s*|\\s*,\\s*)([0-9]{3}[A-Z]?[A-Z]?)",
+                            r"\1 \2, \1 \3", antireqs)
+        antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)(?:\\s*/\\s*|\\s*,\\s*)"
+                            "([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)",
+                            r"\1 \2, \3 \4", antireqs)
+        antireqs = re.sub("([A-Z][A-Z]+)\\s*(?:\\s*/\\s*|\\s*,\\s*)([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)",
+                            r"\1 \3, \2 \3", antireqs)
 
-            for _ in range(1):
-                antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3})([A-Z])\\s*/\\s*([A-Z])",
-                                  r"\1 \2\3, \1 \2\4", antireqs)
-                antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)(?:\\s*/\\s*|\\s*,\\s*)([0-9]{3}[A-Z]?[A-Z]?)",
-                                  r"\1 \2, \1 \3", antireqs)
-                antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)(?:\\s*/\\s*|\\s*,\\s*)"
-                                  "([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)",
-                                  r"\1 \2, \3 \4", antireqs)
-                antireqs = re.sub("([A-Z][A-Z]+)\\s*(?:\\s*/\\s*|\\s*,\\s*)([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)",
-                                  r"\1 \3, \2 \3", antireqs)
+    antireqs = re.findall("(?:[A-Z]+ )?[1-9][0-9][0-9][A-Z]?[A-Z]?", antireqs)
+    extra_info = antireqs if not len(antireqs) else ""
+    fix_antireqs(antireqs)
 
-            self.antireqs = re.findall("(?:[A-Z]+ )?[1-9][0-9][0-9][A-Z]?[A-Z]?", antireqs)
-            self.extra_info = antireqs if not len(self.antireqs) else ""
-            self.__fix_antireqs()
+    return {"courses": antireqs, "extra_info": extra_info}
 
-            return True
-        return False
+def fix_antireqs(antireqs):
+    code = ""
 
-    def __fix_antireqs(self):
-        code = ""
+    for i in range(len(antireqs)):
+        antireq = antireqs[i]
+        code_num = antireq.split()
 
-        for i in range(len(self.antireqs)):
-            antireq = self.antireqs[i]
-            code_num = antireq.split()
+        if len(code_num) == 2:
+            code = code_num[0]
+        else:
+            antireq = code + " " + antireq
 
-            if len(code_num) == 2:
-                code = code_num[0]
-            else:
-                antireq = code + " " + antireq
+        antireqs[i] = antireq
 
-            self.antireqs[i] = antireq
+def str(self, flag="antireqs"):
+    output = ""
 
-    def str(self, flag="antireqs"):
-        output = ""
+    if flag == "antireqs":
+        for i, antireq in enumerate(self.antireqs):
+            output += antireq
+            if i != len(self.antireqs) - 1:
+                output += ", "
 
-        if flag == "antireqs":
-            for i, antireq in enumerate(self.antireqs):
-                output += antireq
-                if i != len(self.antireqs) - 1:
-                    output += ", "
+    elif flag == "extra":
+        output = self.extra_info
 
-        elif flag == "extra":
-            output = self.extra_info
-
-        return output
+    return output
     
 
 # Examples
@@ -541,5 +534,6 @@ examples = [
 # p = Prereqs()
 # Parse and print results
 for example in examples:
-    result = load_prereqs(example)
+    result = load_antireqs(example)
+    print(result)
     

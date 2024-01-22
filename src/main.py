@@ -1,11 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 import requests
-from db.models import Course, Prerequisite, Antirequisite
+from db.schema import CoursesTakenBody
 from db.database import SessionLocal
-from db.data_to_db import add_data_to_db
+# from data_to_db import add_data_to_db
 from sqladmin import Admin
 from db import engine
 from db.admin import admin_views
+from validation import can_take_course
+from sqlalchemy.orm import Session
 
 
 app = FastAPI()
@@ -15,15 +17,17 @@ admin = Admin(app, engine)
 for view in admin_views:
     admin.add_view(view)
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 @app.get("/")
 def read_root():
-    print("WE HAVE A SESSION")
-    db = SessionLocal() 
-    print("LETLS Add to DB")
-    add_data_to_db(db)
-    
-    return {"Hello": "World"}
+    return {"Hello": "Worasdfld"}
 
 
 @app.get("/query")
@@ -34,6 +38,25 @@ def read_item():
 
     response = requests.get(url, headers=header)
     return response.json()
+
+
+@app.post('/can-take/{course}')
+def can_take(courses_taken: CoursesTakenBody, course: str, db: Session = Depends(get_db)):
+    import random
+    print(courses_taken)
+    # can_take_course(courses_taken, course)
+    return random.choice([True, False])
+    # session = SessionLocal()
+    # course = session.query(Course).filter(Course.course_id == course_id).first()
+    # if course is None:
+    #     return {'error': 'course not found'}
+    # prereqs = session.query(Prerequisite).filter(Prerequisite.course_id == course_id).all()
+    # antireqs = session.query(Antirequisite).filter(Antirequisite.course_id == course_id).all()
+    # return {
+    #     'course': course.to_dict(),
+    #     'prereqs': [prereq.to_dict() for prereq in prereqs],
+    #     'antireqs': [antireq.to_dict() for antireq in antireqs]
+    # }
 
 # Yoinked from uw flow
 # def normalize_reqs_str(str_):

@@ -1,6 +1,5 @@
 from typing import Optional, Annotated
 from fastapi import Depends
-import database
 from pydantic import BaseModel
 
 
@@ -38,3 +37,9 @@ class Prerequisite(BaseModel):
         from_attributes = True
 
 
+
+class CoursesTakenBody(BaseModel):
+    course_codes_taken: list[str]
+
+    class Config:
+        from_attributes = True

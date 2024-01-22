@@ -20,7 +20,7 @@ class Course(Base):
     antirequisites = Column(String, unique=False, index=True)
     corequisites = Column(String, unique=False, index=True)
 
-
+    
 
 class Options(Base):
     __allow_unmapped__ = True
