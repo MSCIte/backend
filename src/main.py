@@ -1,10 +1,11 @@
-from typing import Union
-from database.database import engine
 from fastapi import FastAPI
-import os
 import requests
 from sqladmin import Admin
-from database.admin import admin_views
+from db import engine
+from db.admin import admin_views
+
+
+print("==ENGINE", engine)
 
 app = FastAPI()
 

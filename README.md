@@ -1,8 +1,22 @@
 # backend
 🤮🤮🤮
 
-to install packages run `pip install -r requirements.txt`
+Install with: `pip install -r requirements.txt`
 
+Start with: `uvicorn src.main:app --reload`
+
+## Development
+
+Start the DB with `docker compose up`
+
+You can access the admin interface at [http://localhost:15433](http://localhost:15433)
+
+The DB is available at `postgresql://postgres:password@localhost:15432/postgres`, with the login with:
+- username: `postgres`
+- password: `password`
+- database: `postgres`
+- host: `localhost`
+- port: `15432`
 
 ###
 

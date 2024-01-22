@@ -1,0 +1,36 @@
+version: "3.7"
+# Image for postgres and pgadmin
+
+services:
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env.shared
+      - .env.dev
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    env_file:
+      - .env.shared
+      - .env.dev
+    ports:
+      - "15433:80"
+    volumes:
+      - ./pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
