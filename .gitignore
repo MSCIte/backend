@@ -1,6 +1,7 @@
 pgadmin-data/
 db-data/
 
+.env
 .env.dev
 .env.prod
 
