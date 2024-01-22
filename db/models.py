@@ -3,7 +3,7 @@ from fastapi import Depends
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
 from sqladmin import Admin, ModelView
-from database.database import Base
+from db.database import Base
 
 course_prerequisites = Table('course_prerequisites', Base.metadata,
                              Column('course_id', Integer, ForeignKey('courses.id')),

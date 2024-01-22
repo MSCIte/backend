@@ -1,6 +1,6 @@
 from sqladmin import ModelView
 
-from database.models import Options, Course
+from .models import Options, Course
 
 
 class OptionsAdmin(ModelView, model=Options):
