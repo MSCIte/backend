@@ -23,7 +23,7 @@ class Prereqs:
         self.logic = ""
         self.courses = []
 
-    def get_char(i):
+    def get_char(self, i):
         if i + ord('A') > ord('Z'):
             return chr(i - 26 + ord('a'))
         return chr(i + ord('A'))
@@ -46,7 +46,7 @@ class Prereqs:
         i += 1
         return i, courses
 
-    def convert(s):
+    def convert(self, s):
         # initialization of string to " "
         new = " "
 
@@ -105,7 +105,7 @@ class Prereqs:
         return "<" + self.convert(list(filter(lambda a: a != "$", s))) + ">"
 
     def denote_coreqs(self, logic, courses):
-        print(logic)
+        print("LINE 108",logic)
         logic = logic.split()
         coreq_indicators = []
         coreq_all = []
@@ -235,12 +235,12 @@ class Prereqs:
                 # Remove entire block that includes "Open only ...;" and "Level at ...;"
                 prereqs = re.sub("((?:Open only to students in .+[.;])|"
                                 "(?:[Ll]ev(?:el)? at [^.;>&<,]+))", " ", prereqs)
-
+                # print("LINE 238", prereqs)
                 # Remove XX% and 2A like text
                 prereqs = re.sub("((?:[1-9][0-9]%)|"
                                 "(?:[^0-9][1-9][A-Z]))", " ",
                                 prereqs)
-
+                # print("LINE 239", prereqs)
                 # Remove all words
                 prereqs = re.sub("[a-zA-Z\\-]*[a-z][a-zA-Z\\-]*", "", prereqs)
 
@@ -284,7 +284,8 @@ class Prereqs:
                         break
                     else:
                         prereqs = new_prereqs
-
+                
+                print("LINE 288", prereqs)
                 # Find all courses and their indexes
                 grep = "[A-Z]+ /\\||(?:[A-Z]+[ ]?)?[0-9][0-9][0-9][A-Z0]?|[A-Z][A-Z]+"
                 courses = re.findall(grep, prereqs)
@@ -384,12 +385,12 @@ class Prereqs:
                             break
                         prereqs = new_prereqs
 
-                    print(courses)
+                    print("LINE 387", courses)
                     # Modify courses to indicate coreqs
                     courses = self.denote_coreqs(prereqs, courses)
                     prereqs = self.translate_to_python(prereqs)
-                    print(prereqs)
-                    print(courses)
+                    print("LINE 391",prereqs)
+                    print("LINE 392",courses)
 
                     # if self.logic:
                     #     self.logic = "( " + self.logic + " and " + prereqs + " )"
@@ -424,8 +425,8 @@ examples = [
     "Prereq: ((MATH 106 with a grade of at least 70% or MATH 136 or 146) and (MATH 135 with a grade of at least 60% or MATH 145)) or level at least 2A Software Engineering; Honours Mathematics students only. Antireq: CO 220, MATH 229, 249",
     "Prereq: (CHEM 233 or 237), 360; Antireq: CHEM 482"
 ]
-
+p = Prereqs()
 # Parse and print results
 for example in examples:
-    result = Prereqs.load_prereqs(example)
+    result = p.load_prereqs(example)
     # print(result)
