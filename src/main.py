@@ -3,12 +3,20 @@ from typing import Union
 from fastapi import FastAPI
 import os
 import requests
+from db.models import Course, Prerequisite, Antirequisite
+from db.database import SessionLocal
+from db.data_to_db import add_data_to_db
 
 app = FastAPI()
 
 
 @app.get("/")
 def read_root():
+    print("WE HAVE A SESSION")
+    db = SessionLocal() 
+    print("LETLS Add to DB")
+    add_data_to_db(db)
+    
     return {"Hello": "World"}
 
 
