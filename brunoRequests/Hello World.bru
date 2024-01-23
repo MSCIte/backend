@@ -1,0 +1,17 @@
+meta {
+  name: Hello World
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/can-take/course
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "course_codes_taken": ["LOL100", "MSCI200"]
+  }
+}

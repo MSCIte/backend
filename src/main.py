@@ -1,21 +1,34 @@
+from typing import Type
+
 from fastapi import FastAPI, Depends
 import requests
 from db.schema import CoursesTakenBody
 from db.database import SessionLocal
-# from data_to_db import add_data_to_db
+from db.models import Course, Prerequisite, Options
 from sqladmin import Admin
 from db import engine
 from db.admin import admin_views
-from validation import can_take_course
 from sqlalchemy.orm import Session
 
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Admin dashboard
 admin = Admin(app, engine)
 for view in admin_views:
     admin.add_view(view)
+
 
 def get_db():
     db = SessionLocal()
@@ -38,6 +51,34 @@ def read_item():
 
     response = requests.get(url, headers=header)
     return response.json()
+
+
+@app.get("/courses/top")
+def get_top_courses(db: Session = Depends(get_db)):
+    import random
+    courses = db.query(Course).limit(10).all()
+    random.shuffle(courses)
+    return courses
+
+
+@app.get("/courses/all")
+def courses_all(db: Session = Depends(get_db)):
+    return db.query(Course).all()
+
+
+@app.get("/courses")
+def options(db: Session = Depends(get_db)):
+    return db.query(Options).all()
+
+
+@app.get("/prereqs")
+def prereqs(db: Session = Depends(get_db)) -> list[Prerequisite]:
+    return db.query(Prerequisite).limit(10).all()
+
+
+@app.get("/courses")
+def courses(db: Session = Depends(get_db)):
+    return db.query(Course).all()
 
 
 @app.post('/can-take/{course}')
