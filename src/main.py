@@ -1,17 +1,15 @@
-from typing import Type
-
-from fastapi import FastAPI, Depends
 import requests
-from db.schema import CoursesTakenBody, RequirementsResults
-from db.database import SessionLocal
-from db.models import CourseModel, PrerequisiteModel, OptionsModel
+from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqladmin import Admin
+from sqlalchemy.orm import Session
+
 from db import engine
 from db.admin import admin_views
-from sqlalchemy.orm import Session
+from db.database import SessionLocal
+from db.models import CourseModel, PrerequisiteModel, OptionsModel
+from db.schema import CoursesTakenBody, RequirementsResults
 from .validation import can_take_course
-
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -84,7 +82,6 @@ def courses(db: Session = Depends(get_db)):
 
 @app.post('/can-take/{course}')
 def can_take(courses_taken: CoursesTakenBody, course: str, db: Session = Depends(get_db)):
-    import random
     # print("overall courses taken", )
     # print(courses_taken)
     can_take = can_take_course(db, courses_taken.course_codes_taken, course)

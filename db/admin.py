@@ -16,8 +16,10 @@ class OptionsAdmin(ModelView, model=OptionsModel):
 
 
 class CourseAdmin(ModelView, model=CourseModel):
-    column_list = [CourseModel.id, CourseModel.course_name, CourseModel.course_code, CourseModel.credit, CourseModel.location,
-                   CourseModel.description, CourseModel.antirequisites, CourseModel.corequisites, CourseModel.prerequisites]
+    column_list = [CourseModel.id, CourseModel.course_name, CourseModel.course_code, CourseModel.credit,
+                   CourseModel.location,
+                   CourseModel.description, CourseModel.antirequisites, CourseModel.corequisites,
+                   CourseModel.prerequisites]
     can_create = True
     can_edit = True
     can_delete = True

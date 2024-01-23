@@ -1,10 +1,11 @@
-from sqlalchemy.orm import Session
-from db.schema import CoursesTakenBody
-from db.models import CourseModel, PrerequisiteModel, AntirequisiteModel
-from db.database import SessionLocal
-from course_parsing.ascii_translator import get_char
-import re
 import json
+import re
+
+from sqlalchemy.orm import Session
+
+from course_parsing.ascii_translator import get_char
+from db.database import SessionLocal
+from db.models import CourseModel, PrerequisiteModel, AntirequisiteModel
 
 db = SessionLocal()
 
