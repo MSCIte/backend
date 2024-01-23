@@ -29,7 +29,7 @@ def add_data_to_db(db: Session):
         )
 
         for i, row in enumerate(cur):
-            course_code = row[0] + row[1]
+            course_code = row[0] + " " + row[1]
             
             course_name = row[3]
             description = row[4]
@@ -49,12 +49,14 @@ def add_data_to_db(db: Session):
 
                     parsed_antireqs = load_antireqs(antireqs_string)
                     antireq = AntirequisiteModel(course_id=course.id, courses=parsed_antireqs["courses"], extra_info=parsed_antireqs["extra_info"])
+                    # print(antireq.courses)
                     db.add(antireq)
                 else:
                     prereqs_string = requirements_description
                     
                 parsed_prereqs = load_prereqs(prereqs_string)
                 prereq = PrerequisiteModel(course_id=course.id, logic=parsed_prereqs['logic'], courses=parsed_prereqs['courses'])
+                # print(prereq.courses)
                 db.add(prereq)
                 
             if i % 1000 == 0:

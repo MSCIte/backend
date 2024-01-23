@@ -37,7 +37,7 @@ def level_can_take(logic, course, taken_courses, i):
 
 
 def can_take_course(db: Session, courses_taken: list[str], course: str):
-    course_obj = db.query(CourseModel).where(CourseModel.course_code == course.replace(" ", "")).first()
+    course_obj = db.query(CourseModel).where(CourseModel.course_code == course).first()
     prereqs = db.query(PrerequisiteModel).where(PrerequisiteModel.course_id == course_obj.id).first()
     antireqs = db.query(AntirequisiteModel).where(AntirequisiteModel.course_id == course_obj.id).first()
     if antireqs:
