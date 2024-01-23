@@ -1,10 +1,10 @@
 from sqladmin import ModelView
 
-from .models import Options, CourseModel
+from .models import OptionsModel, CourseModel
 
 
-class OptionsAdmin(ModelView, model=Options):
-    column_list = [Options.id, Options.option_name]
+class OptionsAdmin(ModelView, model=OptionsModel):
+    column_list = [OptionsModel.id, OptionsModel.option_name]
     can_create = True
     can_edit = True
     can_delete = True

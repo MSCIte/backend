@@ -1,6 +1,7 @@
 import re
 from .ascii_translator import get_char, get_index
 from .parse_tree import remove_dup_bracket, translate_to_python, denote_coreqs, fix_logic
+import json
 
 
 def letters_to_courses(options, courses):
@@ -267,7 +268,9 @@ def load_prereqs(prereqs, course_code=""):
         # self.__students_only(prereqs_alt)
         # self.__min_level(prereqs_alt)
 
-    return {"logic": prereqs, "courses": courses}
+    prereq_json = json.dumps(courses)
+
+    return {"logic": prereqs, "courses": prereq_json}
 
 def __prereqs(self, prereqs):
     """
@@ -489,7 +492,9 @@ def load_antireqs(antireqs):
     extra_info = antireqs if not len(antireqs) else ""
     fix_antireqs(antireqs)
 
-    return {"courses": antireqs, "extra_info": extra_info}
+    antireqs_json = json.dumps(antireqs)
+
+    return {"courses": antireqs_json, "extra_info": extra_info}
 
 def fix_antireqs(antireqs):
     code = ""

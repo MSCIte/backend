@@ -41,3 +41,11 @@ class CoursesTakenBody(CamelModel):
 
     class Config:
         from_attributes = True
+
+
+class RequirementsResults(CamelModel):
+    result: bool
+    message: str
+
+    class Config:
+        from_attributes = True

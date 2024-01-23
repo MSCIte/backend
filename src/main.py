@@ -2,13 +2,14 @@ from typing import Type
 
 from fastapi import FastAPI, Depends
 import requests
-from db.schema import CoursesTakenBody
+from db.schema import CoursesTakenBody, RequirementsResults
 from db.database import SessionLocal
 from db.models import CourseModel, PrerequisiteModel, OptionsModel
 from sqladmin import Admin
 from db import engine
 from db.admin import admin_views
 from sqlalchemy.orm import Session
+from validation import can_take_course
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -85,8 +86,11 @@ def courses(db: Session = Depends(get_db)):
 def can_take(courses_taken: CoursesTakenBody, course: str, db: Session = Depends(get_db)):
     import random
     print(courses_taken)
-    # can_take_course(courses_taken, course)
-    return random.choice([True, False])
+    can_take = can_take_course(db, courses_taken, course)
+    res = RequirementsResults()
+    res.result = can_take[0]
+    res.message = can_take[1]
+    return res
     # session = SessionLocal()
     # course = session.query(Course).filter(Course.course_id == course_id).first()
     # if course is None:
