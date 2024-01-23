@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 
-class Course(Base):
+class CourseModel(Base):
     __allow_unmapped__ = True
     __tablename__ = 'courses'
     id = Column(Integer, primary_key=True)
@@ -22,20 +22,20 @@ class Course(Base):
 
     
 
-class Options(Base):
+class OptionsModel(Base):
     __allow_unmapped__ = True
     __tablename__ = 'options'
     id = Column(Integer, primary_key=True)
     option_name = Column(String, index=True)
 
 
-class EngineeringDiscipline(Base):
+class EngineeringDisciplineModel(Base):
     __allow_unmapped__ = True
     __tablename__ = 'engineering_discipline'
     id = Column(Integer, primary_key=True)
     discipline_name = Column(String, unique=True, index=True)
 
-class Prerequisite(Base):
+class PrerequisiteModel(Base):
     __allow_unmapped__ = True
     __tablename__ = 'prerequisites'
     id = Column(Integer, primary_key=True)
@@ -45,7 +45,7 @@ class Prerequisite(Base):
     min_level = Column('min_level', String, unique=False, index=True)
     
 
-class Antirequisite(Base):
+class AntirequisiteModel(Base):
     __allow_unmapped__ = True
     __tablename__ = 'antirequisites'
     id = Column(Integer, primary_key=True)

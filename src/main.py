@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends
 import requests
 from db.schema import CoursesTakenBody
 from db.database import SessionLocal
-from db.models import Course, Prerequisite, Options
+from db.models import CourseModel, PrerequisiteModel, OptionsModel
 from sqladmin import Admin
 from db import engine
 from db.admin import admin_views
@@ -56,29 +56,29 @@ def read_item():
 @app.get("/courses/top")
 def get_top_courses(db: Session = Depends(get_db)):
     import random
-    courses = db.query(Course).limit(10).all()
+    courses = db.query(CourseModel).limit(10).all()
     random.shuffle(courses)
     return courses
 
 
 @app.get("/courses/all")
 def courses_all(db: Session = Depends(get_db)):
-    return db.query(Course).all()
+    return db.query(CourseModel).all()
 
 
 @app.get("/courses")
 def options(db: Session = Depends(get_db)):
-    return db.query(Options).all()
+    return db.query(OptionsModel).all()
 
 
 @app.get("/prereqs")
-def prereqs(db: Session = Depends(get_db)) -> list[Prerequisite]:
-    return db.query(Prerequisite).limit(10).all()
+def prereqs(db: Session = Depends(get_db)) -> list[PrerequisiteModel]:
+    return db.query(PrerequisiteModel).limit(10).all()
 
 
 @app.get("/courses")
 def courses(db: Session = Depends(get_db)):
-    return db.query(Course).all()
+    return db.query(CourseModel).all()
 
 
 @app.post('/can-take/{course}')

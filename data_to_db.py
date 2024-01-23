@@ -1,6 +1,6 @@
 import sqlite3
 
-from db.models import Course, Prerequisite, Antirequisite
+from db.models import CourseModel, PrerequisiteModel, AntirequisiteModel
 from db.database import SessionLocal
 from sqlalchemy.orm import Session
 from course_parsing.requirements import load_prereqs, load_antireqs
@@ -34,7 +34,7 @@ def add_data_to_db(db: Session):
             course_name = row[3]
             description = row[4]
             requirements_description = row[5]
-            course = Course(course_code=course_code, course_name=course_name, description=description, requirements_description=requirements_description)
+            course = CourseModel(course_code=course_code, course_name=course_name, description=description, requirements_description=requirements_description)
             db.add(course)
             db.flush()
             if requirements_description:
@@ -48,13 +48,13 @@ def add_data_to_db(db: Session):
                     antireqs_string = requirements_description[index:]
 
                     parsed_antireqs = load_antireqs(antireqs_string)
-                    antireq = Antirequisite(course_id=course.id, courses=parsed_antireqs["courses"], extra_info=parsed_antireqs["extra_info"])
+                    antireq = AntirequisiteModel(course_id=course.id, courses=parsed_antireqs["courses"], extra_info=parsed_antireqs["extra_info"])
                     db.add(antireq)
                 else:
                     prereqs_string = requirements_description
                     
                 parsed_prereqs = load_prereqs(prereqs_string)
-                prereq = Prerequisite(course_id=course.id, logic=parsed_prereqs['logic'], courses=parsed_prereqs['courses'])
+                prereq = PrerequisiteModel(course_id=course.id, logic=parsed_prereqs['logic'], courses=parsed_prereqs['courses'])
                 db.add(prereq)
                 
             if i % 1000 == 0:

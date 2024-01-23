@@ -1,6 +1,6 @@
 from sqladmin import ModelView
 
-from .models import Options, Course
+from .models import Options, CourseModel
 
 
 class OptionsAdmin(ModelView, model=Options):
@@ -15,9 +15,9 @@ class OptionsAdmin(ModelView, model=Options):
     category = "accounts"
 
 
-class CourseAdmin(ModelView, model=Course):
-    column_list = [Course.id, Course.course_name, Course.course_code, Course.credit, Course.location,
-                   Course.description, Course.antirequisites, Course.corequisites, Course.prerequisites]
+class CourseAdmin(ModelView, model=CourseModel):
+    column_list = [CourseModel.id, CourseModel.course_name, CourseModel.course_code, CourseModel.credit, CourseModel.location,
+                   CourseModel.description, CourseModel.antirequisites, CourseModel.corequisites, CourseModel.prerequisites]
     can_create = True
     can_edit = True
     can_delete = True
