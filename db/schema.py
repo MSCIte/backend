@@ -1,9 +1,7 @@
-from typing import Optional, Annotated
-from fastapi import Depends
-from pydantic import BaseModel
+from fastapi_camelcase import CamelModel
 
 
-class Course(BaseModel):
+class Course(CamelModel):
     course_code: str
     course_name: str
     credit: int
@@ -14,21 +12,21 @@ class Course(BaseModel):
         from_attributes = True
 
 
-class Options(BaseModel):
+class Options(CamelModel):
     option_name: str
 
     class Config:
         from_attributes = True
 
 
-class EngineeringDiscipline(BaseModel):
+class EngineeringDiscipline(CamelModel):
     discipline_name: str
 
     class Config:
         from_attributes = True
 
 
-class Prerequisite(BaseModel): 
+class Prerequisite(CamelModel): 
     logic: str
     courses: str
     min_level: str
@@ -38,7 +36,7 @@ class Prerequisite(BaseModel):
 
 
 
-class CoursesTakenBody(BaseModel):
+class CoursesTakenBody(CamelModel):
     course_codes_taken: list[str]
 
     class Config:
