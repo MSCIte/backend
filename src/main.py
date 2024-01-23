@@ -9,7 +9,7 @@ from sqladmin import Admin
 from db import engine
 from db.admin import admin_views
 from sqlalchemy.orm import Session
-from validation import can_take_course
+from .validation import can_take_course
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -73,7 +73,7 @@ def options(db: Session = Depends(get_db)):
 
 
 @app.get("/prereqs")
-def prereqs(db: Session = Depends(get_db)) -> list[PrerequisiteModel]:
+def prereqs(db: Session = Depends(get_db)):
     return db.query(PrerequisiteModel).limit(10).all()
 
 
@@ -85,11 +85,10 @@ def courses(db: Session = Depends(get_db)):
 @app.post('/can-take/{course}')
 def can_take(courses_taken: CoursesTakenBody, course: str, db: Session = Depends(get_db)):
     import random
-    print(courses_taken)
-    can_take = can_take_course(db, courses_taken, course)
-    res = RequirementsResults()
-    res.result = can_take[0]
-    res.message = can_take[1]
+    # print("overall courses taken", )
+    # print(courses_taken)
+    can_take = can_take_course(db, courses_taken.course_codes_taken, course)
+    res = RequirementsResults(result=can_take[0], message=can_take[1])
     return res
     # session = SessionLocal()
     # course = session.query(Course).filter(Course.course_id == course_id).first()

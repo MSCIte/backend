@@ -6,44 +6,46 @@ from course_parsing.ascii_translator import get_char
 import re
 import json
 
-
 db = SessionLocal()
 
+
 def level_can_take(logic, course, taken_courses, i):
-        if course.endswith("000"):
-            print(logic.find(get_char(i)))
-            new_string = ""
-            for taken in taken_courses:
-                course_start = re.match("[A-Z]+ [1-9]", taken).group(0)
-                if course_start == course[:-3]:
-                    new_string += "True and "
-            if new_string == "":
-                logic = logic.replace(get_char(i)+" ", "False ")
-            else:
-                logic = logic.replace(get_char(i)+" ", new_string[:-5]+" ")
-            print(logic)
-        elif course in taken_courses:
-            logic = logic.replace(get_char(i)+" ", "True ")
+    if course.endswith("000"):
+        print(logic.find(get_char(i)))
+        new_string = ""
+        for taken in taken_courses:
+            course_start = re.match("[A-Z]+ [1-9]", taken).group(0)
+            if course_start == course[:-3]:
+                new_string += "True and "
+        if new_string == "":
+            logic = logic.replace(get_char(i) + " ", "False ")
         else:
-            logic = logic.replace(get_char(i)+" ", "False ")
+            logic = logic.replace(get_char(i) + " ", new_string[:-5] + " ")
+        print(logic)
+    elif course in taken_courses:
+        logic = logic.replace(get_char(i) + " ", "True ")
+    else:
+        logic = logic.replace(get_char(i) + " ", "False ")
 
-        iter = re.finditer("len\\(tuple\\(filter\\(None,\\[ (?:True|False)((?: and True)+)", logic)
-        for m in iter:
-            start = m.start(0)
-            end = m.end(0)
-            logic = logic[:start] + logic[start:end].replace(" and", ",") + logic[end:]
+    iter = re.finditer("len\\(tuple\\(filter\\(None,\\[ (?:True|False)((?: and True)+)", logic)
+    for m in iter:
+        start = m.start(0)
+        end = m.end(0)
+        logic = logic[:start] + logic[start:end].replace(" and", ",") + logic[end:]
 
-        return logic
+    return logic
 
-def can_take_course(db: Session, courses_taken: CoursesTakenBody, course: str):
-    course_obj = db.query(CourseModel).filter(CourseModel.course_code == course.replace(" ", "")).first()
-    prereqs = db.query(PrerequisiteModel).filter(PrerequisiteModel.course_id == course_obj.id).first()
-    antireqs = db.query(AntirequisiteModel).filter(AntirequisiteModel.course_id == course_obj.id).first()
-    antireq_courses = json.loads(antireqs.courses)
-    for antireq in antireq_courses:
-        if any(c in antireq for c in courses_taken):
-            return False, "The course has an antirequisite."
-        
+
+def can_take_course(db: Session, courses_taken: list[str], course: str):
+    course_obj = db.query(CourseModel).where(CourseModel.course_code == course.replace(" ", "")).first()
+    prereqs = db.query(PrerequisiteModel).where(PrerequisiteModel.course_id == course_obj.id).first()
+    antireqs = db.query(AntirequisiteModel).where(AntirequisiteModel.course_id == course_obj.id).first()
+    if antireqs:
+        antireq_courses = json.loads(antireqs.courses)
+        for antireq in antireq_courses:
+            if any((c in antireq) for c in courses_taken):
+                return False, "The course has an antirequisite."
+
     prereq_logic = prereqs.logic
     prereq_courses = json.loads(prereqs.courses)
     for i in range(len(prereq_courses)):
@@ -77,7 +79,6 @@ def can_take_course(db: Session, courses_taken: CoursesTakenBody, course: str):
         #                     [settings.EMAIL_HOST_USER])
         # msg.send()
         return
-    
-            
 
-print(can_take_course(db, ["LOL 1001", "CS 135"], "ACTSC127"))
+
+# print(can_take_course(db, ["LOL 1001", "CS 135"], "ACTSC127"))

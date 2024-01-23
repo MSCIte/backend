@@ -43,6 +43,7 @@ class CoursesTakenBody(CamelModel):
         from_attributes = True
 
 
+
 class RequirementsResults(CamelModel):
     result: bool
     message: str

@@ -1,0 +1,26 @@
+meta {
+  name: Can take
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8000/can-take/MSCI%20240
+  body: json
+  auth: none
+}
+
+query {
+  : 
+}
+
+headers {
+  accept: application/json
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "courseCodesTaken": ["bruh"]
+  }
+}
