@@ -26,7 +26,7 @@ class EngineeringDiscipline(CamelModel):
         from_attributes = True
 
 
-class Prerequisite(CamelModel): 
+class Prerequisite(CamelModel):
     logic: str
     courses: str
     min_level: str
@@ -35,13 +35,11 @@ class Prerequisite(CamelModel):
         from_attributes = True
 
 
-
 class CoursesTakenBody(CamelModel):
     course_codes_taken: list[str]
 
     class Config:
         from_attributes = True
-
 
 
 class RequirementsResults(CamelModel):

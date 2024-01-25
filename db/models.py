@@ -1,7 +1,4 @@
-from typing import Optional, Annotated
-from fastapi import Depends
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey, Integer, String
 
 from .database import Base
 
