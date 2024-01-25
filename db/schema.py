@@ -1,7 +1,7 @@
 from fastapi_camelcase import CamelModel
 
 
-class Course(CamelModel):
+class CourseSchema(CamelModel):
     course_code: str
     course_name: str
     credit: int
@@ -12,8 +12,13 @@ class Course(CamelModel):
         from_attributes = True
 
 
-class Options(CamelModel):
+class OptionsSchema(CamelModel):
     option_name: str
+    course_codes: str
+    number_of_courses: int
+    additional_requirements: str
+    link: str
+    year: str
 
     class Config:
         from_attributes = True
@@ -21,12 +26,18 @@ class Options(CamelModel):
 
 class EngineeringDiscipline(CamelModel):
     discipline_name: str
+    course_codes: list[str]
+    number_of_courses: int
+    credits_required: float
+    additional_requirements: str
+    link: str
+    year: str
 
     class Config:
         from_attributes = True
 
 
-class Prerequisite(CamelModel):
+class PrereqSchema(CamelModel): 
     logic: str
     courses: str
     min_level: str

@@ -1,4 +1,7 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from typing import Optional, Annotated
+from fastapi import Depends
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, Float
+from sqlalchemy.orm import relationship
 
 from .database import Base
 
@@ -24,13 +27,24 @@ class OptionsModel(Base):
     __tablename__ = 'options'
     id = Column(Integer, primary_key=True)
     option_name = Column(String, index=True)
+    course_codes = Column(String, unique=False)
+    number_of_courses = Column(Integer, unique=False)
+    additional_requirements = Column(String, unique=False)
+    link = Column(String, unique=False)
+    year = Column(String, unique=False)
 
 
 class EngineeringDisciplineModel(Base):
     __allow_unmapped__ = True
     __tablename__ = 'engineering_discipline'
     id = Column(Integer, primary_key=True)
-    discipline_name = Column(String, unique=True, index=True)
+    discipline_name = Column(String, unique=False, index=True)
+    course_codes = Column(String, unique=False)
+    number_of_courses = Column(Integer, unique=False)
+    credits_required = Column(Float, unique=False)
+    additional_requirements = Column(String, unique=False)
+    link = Column(String, unique=False)
+    year = Column(String, unique=False)
 
 class PrerequisiteModel(Base):
     __allow_unmapped__ = True
