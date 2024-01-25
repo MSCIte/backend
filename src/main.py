@@ -58,21 +58,21 @@ def read_item():
 # --------
 
 @app.get('/option/{opt_id}/reqs')
-async def options_reqs(opt_id: int) -> list(CourseSchema):
+async def options_reqs(opt_id: int) -> list[CourseSchema]:
     pass
 
 
 @app.get('/option/{opt_id}/missing_reqs')
-async def options_missing_reqs(opt_id: int) -> list(CourseSchema):
+async def options_missing_reqs(opt_id: int) -> list[CourseSchema]:
     pass
 
 
 @app.get('/degree/{degree_id}/reqs')
-def degree_reqs(degree_id: int) -> list(CourseSchema):
+def degree_reqs(degree_id: int) -> list[CourseSchema]:
     pass
 
 @app.get('/degree/{degree_id}/missing_reqs')
-async def degree_missing_reqs(degree_id) -> list(CourseSchema):
+async def degree_missing_reqs(degree_id) -> list[CourseSchema]:
     pass
 
 @app.get('/courses/can-take/{course_code}')
@@ -85,7 +85,7 @@ async def courses_can_take(course_code: str, courses_taken: CoursesTakenBody, db
 
 
 @app.get('/courses/search')
-async def search_courses(q: str | None = None, offset: int | None = 0) -> list(CourseSchema):
+async def search_courses(q: str | None = None, offset: int | None = 0) -> list[CourseSchema]:
     
     pass
 
