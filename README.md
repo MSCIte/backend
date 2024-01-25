@@ -18,6 +18,10 @@ The DB is available at `postgresql://postgres:password@localhost:15432/postgres`
 - host: `localhost`
 - port: `15432`
 
+
+Perform the migration: `alembic upgrade head`
+
+
 Seed the database with `python data_to_db.py`
 
 ###
@@ -25,4 +29,3 @@ Seed the database with `python data_to_db.py`
 Generate new migration revision: `alembic revision --autogenerate -m "initial setup"`
 
 
-Perform the migration: `alembic upgrade head`

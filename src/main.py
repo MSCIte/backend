@@ -1,19 +1,16 @@
-from typing import List, Type, Annotated
+from typing import Annotated
 
 import requests
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from db.schema import CoursesTakenBody, RequirementsResults, CourseSchema
-from db.database import SessionLocal
-from db.models import CourseModel, PrerequisiteModel, OptionsModel
-from sqlalchemy.sql.operators import ilike_op
 from sqladmin import Admin
 from sqlalchemy.orm import Session
 
 from db import engine
 from db.admin import admin_views
 from db.database import SessionLocal
-from db.models import CourseModel, PrerequisiteModel, OptionsModel
+from db.models import CourseModel
+from db.schema import CourseSchema
 from db.schema import CoursesTakenBody, RequirementsResults
 from .validation import can_take_course
 
@@ -90,7 +87,9 @@ async def courses_can_take(course_code: str, courses_taken: CoursesTakenBody,
 
 @app.get('/courses/search', response_model=list[CourseSchema])
 def search_courses(q: str | None = None, offset: Annotated[int | None, "bruh"] = 0, db: Session = Depends(get_db)):
-    courses = db.query(CourseModel).where(CourseModel.course_code.ilike(f"%{q}%")).offset(offset).limit(10).all()
+    # https://stackoverflow.com/a/71147604
+    courses = db.query(CourseModel).order_by(CourseModel.course_code.op("<->")(q)).offset(offset).limit(100).all()
+
     return courses
 
 
