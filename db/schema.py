@@ -2,14 +2,18 @@ from fastapi_camelcase import CamelModel
 
 
 class CourseSchema(CamelModel):
-    course_code: str
-    course_name: str
-    credit: int
-    description: str
-    location: str
+    course_code: str = ''
+    course_name: str = ''
+    credit: int | None = -1000
+    description: str = ''
+    location: str | None = ''
+    prerequisites: str | None = ''
+    antirequisites: str | None = ''
+    corequisites: str | None = ''
 
-    class Config:
-        from_attributes = True
+
+class Config:
+    from_attributes = True
 
 
 class OptionsSchema(CamelModel):
@@ -37,7 +41,7 @@ class EngineeringDiscipline(CamelModel):
         from_attributes = True
 
 
-class PrereqSchema(CamelModel): 
+class PrereqSchema(CamelModel):
     logic: str
     courses: str
     min_level: str

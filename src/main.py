@@ -1,9 +1,12 @@
+from typing import List, Type, Annotated
+
 import requests
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from db.schema import CoursesTakenBody, RequirementsResults, CourseSchema
 from db.database import SessionLocal
 from db.models import CourseModel, PrerequisiteModel, OptionsModel
+from sqlalchemy.sql.operators import ilike_op
 from sqladmin import Admin
 from sqlalchemy.orm import Session
 
@@ -71,27 +74,28 @@ async def options_missing_reqs(opt_id: int) -> list[CourseSchema]:
 def degree_reqs(degree_id: int) -> list[CourseSchema]:
     pass
 
+
 @app.get('/degree/{degree_id}/missing_reqs')
 async def degree_missing_reqs(degree_id) -> list[CourseSchema]:
     pass
 
+
 @app.get('/courses/can-take/{course_code}')
-async def courses_can_take(course_code: str, courses_taken: CoursesTakenBody, db: Session = Depends(get_db)) -> RequirementsResults:
+async def courses_can_take(course_code: str, courses_taken: CoursesTakenBody,
+                           db: Session = Depends(get_db)) -> RequirementsResults:
     can_take = can_take_course(db, courses_taken.course_codes_taken, course_code)
     res = RequirementsResults(result=can_take[0], message=can_take[1])
     return res
 
 
+@app.get('/courses/search', response_model=list[CourseSchema])
+def search_courses(q: str | None = None, offset: Annotated[int | None, "bruh"] = 0, db: Session = Depends(get_db)):
+    courses = db.query(CourseModel).where(CourseModel.course_code.ilike(f"%{q}%")).offset(offset).limit(10).all()
+    return courses
 
-
-@app.get('/courses/search')
-async def search_courses(q: str | None = None, offset: int | None = 0) -> list[CourseSchema]:
-    
-    pass
 
 @app.get('/sample-path')
 async def sample_path():
     return {
         "lol": "rooined"
     }
-    
