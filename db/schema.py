@@ -1,15 +1,40 @@
+from enum import Enum
+
 from fastapi_camelcase import CamelModel
 
 
 class CourseSchema(CamelModel):
-    course_code: str = ''
-    course_name: str = ''
+    course_code: str
+    course_name: str
     credit: int | None = -1000
     description: str = ''
     location: str | None = ''
     prerequisites: str | None = ''
     antirequisites: str | None = ''
     corequisites: str | None = ''
+
+
+class ColorsEnum(str, Enum):
+    red = "red"
+    green = "green"
+    orange = "orange"
+    yellow = "yellow"
+    blue = "blue"
+    purple = "purple"
+    pink = "pink"
+    indigo = "indigo"
+    gray = "gray"
+
+
+class TagSchema(CamelModel):
+    code: str  # e.g. "te", "mand"
+    color: ColorsEnum = ColorsEnum.red  # e.g. "red", "green"
+    short_name: str  # e.g. "TE", "Mand."
+    long_name: str  # e.g. "Technical Elective", "Mandatory"
+
+
+class CourseWithTagsSchema(CourseSchema):
+    tags: list[TagSchema] = []
 
 
 class Config:
@@ -50,7 +75,7 @@ class PrereqSchema(CamelModel):
         from_attributes = True
 
 
-class CoursesTakenBody(CamelModel):
+class CoursesTakenIn(CamelModel):
     course_codes_taken: list[str]
 
     class Config:
