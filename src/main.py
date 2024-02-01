@@ -1,19 +1,19 @@
 from typing import Annotated
-
 import requests
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from db.models import CourseModel
+from db.schema import CourseSchema, CourseWithTagsSchema
+from db.schema import CoursesTakenIn, RequirementsResults
+from db.database import SessionLocal
 from sqladmin import Admin
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from db import engine
 from db.admin import admin_views
 from db.database import SessionLocal
-from db.models import CourseModel
-from db.schema import CourseSchema, CourseWithTagsSchema
-from db.schema import CoursesTakenIn, RequirementsResults
 from .validation import can_take_course
+from ..api import get_options_reqs, get_degree_reqs, get_all_degrees
 
 app = FastAPI()
 
@@ -59,32 +59,36 @@ def read_item():
 # --------
 
 @app.get('/option/{opt_id}/reqs')
-async def options_reqs(opt_id: int) -> list[CourseSchema]:
+def options_reqs(opt_id: int, db: Session = Depends(get_db)) -> list[CourseSchema]:
+    reqs = get_options_reqs(opt_id, db)
     pass
 
 
 @app.get('/option/{opt_id}/missing_reqs')
-async def options_missing_reqs(opt_id: int) -> list[CourseSchema]:
+def options_missing_reqs(opt_id: int, db: Session = Depends(get_db)) -> list[CourseSchema]:
     pass
 
 
-@app.get('/degree/{degree_id}/reqs')
-def degree_reqs(degree_id: int) -> list[CourseSchema]:
+@app.get('/degree/{degree_name}/reqs')
+def degree_reqs(degree_name: str, db: Session = Depends(get_db)) -> list[CourseSchema]:
+    reqs = get_degree_reqs(degree_name, db)
     pass
 
+@app.get('/degree')
+def degrees(db: Session = Depends(get_db)) -> list[str]:
+    degrees = get_all_degrees(db).keys()
+    return degrees
 
 @app.get('/degree/{degree_id}/missing_reqs')
-def degree_missing_reqs(degree_id) -> list[CourseSchema]:
+def degree_missing_reqs(degree_id: str, db: Session = Depends(get_db)) -> list[CourseSchema]:
+
     pass
 
-
 @app.get('/courses/can-take/{course_code}')
-def courses_can_take(course_code: str, courses_taken: CoursesTakenIn,
-                     db: Session = Depends(get_db)) -> RequirementsResults:
+def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Session = Depends(get_db)) -> RequirementsResults:
     can_take = can_take_course(db, courses_taken.course_codes_taken, course_code)
     res = RequirementsResults(result=can_take[0], message=can_take[1])
     return res
-
 
 @app.get('/courses/search', response_model=list[CourseWithTagsSchema])
 def search_courses(q: str | None = None, offset: Annotated[int | None, "bruh"] = 0, db: Session = Depends(get_db)):
@@ -106,9 +110,9 @@ def search_courses(q: str | None = None, offset: Annotated[int | None, "bruh"] =
 
     return courses
 
-
 @app.get('/sample-path')
 def sample_path():
     return {
         "lol": "rooined"
     }
+    
