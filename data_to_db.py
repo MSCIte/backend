@@ -101,5 +101,5 @@ def add_degrees_to_db(db: Session):
 
 db = SessionLocal() 
 add_degrees_to_db(db)
-# add_courses_to_db(db)
+add_courses_to_db(db)
 

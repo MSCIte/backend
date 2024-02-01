@@ -12,13 +12,16 @@ class CourseModel(Base):
     id = Column(Integer, primary_key=True)
     course_code = Column(String, unique=True, index=True)
     course_name = Column(String, unique=False, index=True)
-    credit = Column(Integer, unique=False, index=True)
+    credit = Column(Integer, unique=False, index=True, nullable=True)
     description = Column(String, index=True)
-    location = Column(String, unique=True, index=True)
-    requirements_description = Column(String, unique=False)
-    prerequisites = Column(String, unique=False, index=True)
-    antirequisites = Column(String, unique=False, index=True)
-    corequisites = Column(String, unique=False, index=True)
+    location = Column(String, unique=True, index=True, nullable=True)
+    requirements_description = Column(String, unique=False, nullable=True)
+    prerequisites = Column(String, unique=False, index=True, nullable=True)
+    antirequisites = Column(String, unique=False, index=True, nullable=True)
+    corequisites = Column(String, unique=False, index=True, nullable=True)
+
+    def __str__(self):
+        return self.course_code
 
     
 
