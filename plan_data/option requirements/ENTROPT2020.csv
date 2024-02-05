@@ -1,0 +1,15 @@
+type,name,calendar,category,sbj_list,cnbr_name
+plan,ENTROPT,2020,Required,BET,100
+,,,,BET,320
+,,,,BET,340
+,,,Elective,list,bet_elective
+,,,,list,bet_elective
+,,,,list,bet_elective
+,,,Milestone,BETMLSTN,
+list,bet_elective,2020,,BET,*
+,,,,list,bet_proj:
+,,,,list,bet_te
+,,,,list,eng_cseB
+list,bet_proj:,2020,,BET,410A
+,,,,BET,410B
+,,,,list,eng_proj

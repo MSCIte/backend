@@ -1,0 +1,11 @@
+type,name,calendar,category,sbj_list,cnbr_name
+plan,ENTREPMIN,2023,Required,BET,100
+,,,,BET,320
+,,,,BET,340
+,,,Elective,BET,*
+,,,,BET,*
+,,,,BET,*
+,,,,list,entrep_elec
+,,,,list,entrep_elec
+,,,Milestone,ENTREPMLSTN,
+list,entrep_elec,2023,,BET,*

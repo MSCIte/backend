@@ -1,0 +1,10 @@
+type,name,calendar,category,sbj_list,cnbr_name
+plan,ENTROPT,2021,Required,BET,100
+,,,,BET,320
+,,,,BET,340
+,,,Elective,list,entropt_bet_elec
+,,,,list,entropt_te
+,,,,list,entropt_te
+,,,Milestone,BETMLSTN,
+list,entropt_bet_elec,2021,,BET,*
+list,entropt_te,2021,,BET,*
