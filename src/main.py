@@ -13,7 +13,7 @@ from db import engine
 from db.admin import admin_views
 from db.database import SessionLocal
 from .validation import can_take_course
-from ..api import get_options_reqs, get_degree_reqs, get_all_degrees
+from .api import get_options_reqs, get_degree_reqs, get_all_degrees
 
 app = FastAPI()
 

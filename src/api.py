@@ -14,7 +14,7 @@ def get_degree_reqs(degree_name: str, db: Session):
         .all()
     )
     
-    print(reqs)
+    # print(reqs)
 
 def get_all_degrees(db: Session):
     degree_map = {degree.discipline_name.lower().replace(' ', '_'): degree.discipline_name for degree in db.query(EngineeringDisciplineModel.discipline_name).distinct()}
@@ -36,10 +36,10 @@ def get_options_reqs(option_id: str, db: Session):
             .where(and_(EngineeringDisciplineModel.discipline_name == option_id, EngineeringDisciplineModel.year == "2022-2023")).all()]
 
     testing = db.query(EngineeringDisciplineModel).where(and_(EngineeringDisciplineModel.discipline_name == option_id, EngineeringDisciplineModel.year == "2022-2023")).all()
-    print(len(testing))
+    # print(len(testing))
 
-    for entry in testing:
-        print(entry.course_codes)
+    # for entry in testing:
+    #     print(entry.course_codes)
 
     res = {
         "discipline": option_id,
