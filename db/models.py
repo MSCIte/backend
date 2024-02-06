@@ -45,6 +45,7 @@ class EngineeringDisciplineModel(Base):
     course_codes = Column(String, unique=False)
     number_of_courses = Column(Integer, unique=False)
     credits_required = Column(Float, unique=False)
+    term = Column(String, unique=False)
     additional_requirements = Column(String, unique=False)
     link = Column(String, unique=False)
     year = Column(String, unique=False)
