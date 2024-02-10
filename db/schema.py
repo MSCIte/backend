@@ -41,13 +41,14 @@ class Config:
     from_attributes = True
 
 
+class OptionRequirement(CamelModel):
+    courses: list[str]
+    number_of_courses: int
+
+
 class OptionsSchema(CamelModel):
     option_name: str
-    course_codes: str
-    number_of_courses: int
-    additional_requirements: str
-    link: str
-    year: str
+    requirements: list[OptionRequirement]
 
     class Config:
         from_attributes = True
