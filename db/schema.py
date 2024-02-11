@@ -89,3 +89,24 @@ class RequirementsResults(CamelModel):
 
     class Config:
         from_attributes = True
+
+
+class AdditionalReqCount(CamelModel):
+    completed: str
+    total: str
+
+
+class DegreeMissingReqs(CamelModel):
+    mandatory_courses: list[str]
+    additional_reqs: dict[str, AdditionalReqCount]
+
+
+class DegreeRequirement(CamelModel):
+    courses: list[str]
+    number_of_courses: int
+
+
+class DegreeReqs(CamelModel):
+    mandatory_courses: list[str]
+    additional_reqs: dict[str, DegreeRequirement]
+

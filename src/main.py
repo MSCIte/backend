@@ -3,7 +3,7 @@ import requests
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from db.models import CourseModel
-from db.schema import CourseSchema, CourseWithTagsSchema, OptionsSchema, OptionRequirement
+from db.schema import CourseSchema, CourseWithTagsSchema, OptionsSchema, OptionRequirement, DegreeMissingReqs, DegreeReqs
 from db.schema import CoursesTakenIn, RequirementsResults
 from db.database import SessionLocal
 from sqladmin import Admin
@@ -66,14 +66,14 @@ def options_reqs(opt_id: str, year: str, db: Session = Depends(get_db)):
 # done
 @app.get('/option/{opt_id}/missing_reqs', response_model=list[OptionRequirement])
 def options_missing_reqs(opt_id: str, courses_taken: CoursesTakenIn, year: str, db: Session = Depends(get_db)):
-    missing_reqs = get_option_missing_reqs(opt_id, year, courses_taken, db)
+    missing_reqs = get_option_missing_reqs(opt_id, year, courses_taken)
     return missing_reqs
 
-
-@app.get('/degree/{degree_name}/reqs')
+#done
+@app.get('/degree/{degree_name}/reqs', response_model=DegreeReqs)
 def degree_reqs(degree_name: str, year: str, db: Session = Depends(get_db)) -> list[CourseSchema]:
-    reqs = get_degree_reqs(degree_name, db, year)
-    pass
+    reqs = get_degree_reqs(degree_name, year, db)
+    return reqs
 
 #done
 @app.get('/degree')
@@ -81,8 +81,9 @@ def degrees(db: Session = Depends(get_db)) -> list[str]:
     degrees = get_all_degrees(db).keys()
     return degrees
 
+#done 
 @app.get('/degree/{degree_id}/missing_reqs')
-def degree_missing_reqs(degree_id: str, courses_taken: list[str], year: str,  db: Session = Depends(get_db)):
+def degree_missing_reqs(degree_id: str, courses_taken: list[str], year: str,  db: Session = Depends(get_db)) -> DegreeMissingReqs:
     missing_reqs = get_degree_missing_reqs(degree_id, courses_taken, year)
     return missing_reqs
 
