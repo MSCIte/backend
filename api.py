@@ -2,10 +2,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel
 from db.database import SessionLocal
-from db.schema import OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, AdditionalReqCount, DegreeReqs, DegreeRequirement
+from db.schema import OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, AdditionalReqCount, \
+    DegreeReqs, DegreeRequirement
 import re
 
 db = SessionLocal()
+
 
 def clean_courses(courses):
     res = []
@@ -15,42 +17,47 @@ def clean_courses(courses):
 
 
 def get_all_degrees(db: Session):
-    degree_map = {degree.discipline_name.lower().replace(' ', '_'): degree.discipline_name for degree in db.query(EngineeringDisciplineModel.discipline_name).distinct()}
+    degree_map = {degree.discipline_name.lower().replace(' ', '_'): degree.discipline_name for degree in
+                  db.query(EngineeringDisciplineModel.discipline_name).distinct()}
     return degree_map
 
 
-#add logic to select most recent year 
+# add logic to select most recent year
 def get_degree_reqs(degree_name: str, year: str, db: Session):
     degree_map = get_all_degrees(db)
     degree_formatted_name = degree_map[degree_name]
 
     if (
-        db.query(
-            db.query(func.count())
-            .filter(
-                and_(
-                    EngineeringDisciplineModel.discipline_name == degree_formatted_name,
-                    EngineeringDisciplineModel.year == year
+            db.query(
+                db.query(func.count())
+                        .filter(
+                    and_(
+                        EngineeringDisciplineModel.discipline_name == degree_formatted_name,
+                        EngineeringDisciplineModel.year == year
+                    )
                 )
-            )
-            .scalar()
-        ).scalar() > 0
+                        .scalar()
+            ).scalar() > 0
     ):
-        rows = [{"courses": row.course_codes.split(","), "number_of_courses": row.number_of_courses, "term": row.term} for row in 
-            db.query(EngineeringDisciplineModel)
-            .where(and_(EngineeringDisciplineModel.discipline_name == degree_formatted_name, EngineeringDisciplineModel.year == year))
-            .all()]
+        rows = [{"courses": row.course_codes.split(","), "number_of_courses": row.number_of_courses, "term": row.term}
+                for row in
+                db.query(EngineeringDisciplineModel)
+                .where(and_(EngineeringDisciplineModel.discipline_name == degree_formatted_name,
+                            EngineeringDisciplineModel.year == year))
+                .all()]
     else:
         latest_year = (
             db.query(func.max(EngineeringDisciplineModel.year))
             .filter(EngineeringDisciplineModel.discipline_name == degree_formatted_name)
             .scalar()
         )
-        rows = [{"courses": row.course_codes.split(","), "number_of_courses": row.number_of_courses, "term": row.term} for row in 
-            db.query(EngineeringDisciplineModel)
-            .where(and_(EngineeringDisciplineModel.discipline_name == degree_formatted_name, EngineeringDisciplineModel.year == latest_year))
-            .all()]
-    
+        rows = [{"courses": row.course_codes.split(","), "number_of_courses": row.number_of_courses, "term": row.term}
+                for row in
+                db.query(EngineeringDisciplineModel)
+                .where(and_(EngineeringDisciplineModel.discipline_name == degree_formatted_name,
+                            EngineeringDisciplineModel.year == latest_year))
+                .all()]
+
     requirements = DegreeReqs(mandatory_courses=[], additional_reqs={})
 
     for row in rows:
@@ -68,20 +75,21 @@ def get_degree_reqs(degree_name: str, year: str, db: Session):
 
 def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year: str, db: Session) -> DegreeMissingReqs:
     if (
-        db.query(
-            db.query(func.count())
-            .filter(
-                and_(
-                    EngineeringDisciplineModel.discipline_name == degree_id,
-                    EngineeringDisciplineModel.year == year
+            db.query(
+                db.query(func.count())
+                        .filter(
+                    and_(
+                        EngineeringDisciplineModel.discipline_name == degree_id,
+                        EngineeringDisciplineModel.year == year
+                    )
                 )
-            )
-            .scalar()
-        ).scalar() > 0
+                        .scalar()
+            ).scalar() > 0
     ):
         reqs = (
             db.query(EngineeringDisciplineModel)
-            .where(and_(EngineeringDisciplineModel.discipline_name == degree_id, EngineeringDisciplineModel.year == year))
+            .where(
+                and_(EngineeringDisciplineModel.discipline_name == degree_id, EngineeringDisciplineModel.year == year))
             .all()
         )
     else:
@@ -92,10 +100,10 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
         )
         reqs = (
             db.query(EngineeringDisciplineModel)
-            .where(and_(EngineeringDisciplineModel.discipline_name == degree_id, EngineeringDisciplineModel.year == latest_year))
+            .where(and_(EngineeringDisciplineModel.discipline_name == degree_id,
+                        EngineeringDisciplineModel.year == latest_year))
             .all()
         )
-    
 
     missing_courses = DegreeMissingReqs(mandatory_courses=[], additional_reqs={})
 
@@ -116,10 +124,13 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                     missing_courses.mandatory_courses.append("(" + req.course_codes + ")")
                 else:
                     if req.term not in missing_courses.additional_reqs:
-                        missing_courses.additional_reqs[req.term] = AdditionalReqCount(completed=str(count), total=str(req.number_of_courses))
+                        missing_courses.additional_reqs[req.term] = AdditionalReqCount(completed=str(count),
+                                                                                       total=str(req.number_of_courses))
                     else:
-                        missing_courses.additional_reqs[req.term].completed = str(int(missing_courses.additional_reqs[req.term].completed) + count)
-                        missing_courses.additional_reqs[req.term].total = str(int(missing_courses.additional_reqs[req.term].total) + int(req.number_of_courses))
+                        missing_courses.additional_reqs[req.term].completed = str(
+                            int(missing_courses.additional_reqs[req.term].completed) + count)
+                        missing_courses.additional_reqs[req.term].total = str(
+                            int(missing_courses.additional_reqs[req.term].total) + int(req.number_of_courses))
 
             else:
                 if req.course_codes not in courses_taken:
@@ -128,10 +139,10 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                     else:
                         missing_courses.additional_reqs[req.term] = AdditionalReqCount(completed="0", total="1")
     return missing_courses
-    
-    
+
+
 def get_options_reqs(option_id: str, year: str, db: Session) -> OptionsSchema:
-    rows = [{"courses": row.course_codes.split(","), "number_of_courses": row.number_of_courses} for row in 
+    rows = [{"courses": row.course_codes.split(","), "number_of_courses": row.number_of_courses} for row in
             db.query(OptionsModel)
             .filter(and_(OptionsModel.option_name == option_id, OptionsModel.year == year)).all()]
     res: OptionsSchema = {
@@ -161,6 +172,7 @@ def find_missing_requirements(course_list, requirements):
 
     return missing_requirements
 
+
 def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTakenIn) -> list[OptionRequirement]:
     data = get_options_reqs(option_id, year, db)
     missing_requirements: list[OptionRequirement] = find_missing_requirements(courses_taken, data["requirements"])
@@ -169,7 +181,7 @@ def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTak
         print("YAY all requirements met")
     else:
         print("MISSING REQUIREMENTS:", missing_requirements)
-    
+
     return missing_requirements
 
 # get_degree_missing_reqs("software_engineering", ["CS137", "ECE105", "MATH115", "MATH119", "CS241", "ECE313"], "2023")

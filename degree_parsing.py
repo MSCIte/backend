@@ -24,31 +24,32 @@ program_names = {
 }
 
 link_map = {
-   "nanotechnology_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Nanotechnology-Engineering",
-   "geological_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Geological-Engineering",
-   "environmental_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Environmental-Engineering",
-   "biomedical_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Biomedical-Engineering",
-   "electrical_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Electrical-Engineering",
-   "architectual_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Architectural-Engineering",
-   "systems_design_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Systems-Design-Engineering",
-   "management_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Management-Engineering",
-   "mechatronics_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Mechatronics-Engineering",
-   "software_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Software-Engineering",
-   "civil_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Civil-Engineering",
-   "mechanical_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Mechanical-Engineering",
-   "computer_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Computer-Engineering",
-   "chemical_engineering" : "https://ugradcalendar.uwaterloo.ca/page/ENG-Chemical-Engineering",
-   "architecture": "https://ugradcalendar.uwaterloo.ca/page/ENG-Honours-Bachelor-of-Architectural-Studies",
+    "nanotechnology_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Nanotechnology-Engineering",
+    "geological_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Geological-Engineering",
+    "environmental_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Environmental-Engineering",
+    "biomedical_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Biomedical-Engineering",
+    "electrical_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Electrical-Engineering",
+    "architectual_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Architectural-Engineering",
+    "systems_design_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Systems-Design-Engineering",
+    "management_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Management-Engineering",
+    "mechatronics_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Mechatronics-Engineering",
+    "software_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Software-Engineering",
+    "civil_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Civil-Engineering",
+    "mechanical_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Mechanical-Engineering",
+    "computer_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Computer-Engineering",
+    "chemical_engineering": "https://ugradcalendar.uwaterloo.ca/page/ENG-Chemical-Engineering",
+    "architecture": "https://ugradcalendar.uwaterloo.ca/page/ENG-Honours-Bachelor-of-Architectural-Studies",
 }
 
 db = SessionLocal()
+
 
 class EngineeringDiscipline:
     def __init__(self):
         self.eng_id = ""
         self.plan = {}
         self.lists = {}
-        
+
     pass
 
 
@@ -67,13 +68,13 @@ def write_to_db(db, plans, lists, program_name, year):
         if "courses" in plan:
             for course in plan["courses"]:
                 entry = EngineeringDisciplineModel(
-                                discipline_name=program_name, 
-                                course_codes=course, 
-                                number_of_courses=1,
-                                link=link_map[program_name],
-                                year=year,
-                                term=term
-                            )
+                    discipline_name=program_name,
+                    course_codes=course,
+                    number_of_courses=1,
+                    link=link_map[program_name],
+                    year=year,
+                    term=term
+                )
                 db.add(entry)
         if "lists" in plan:
             for list in plan["lists"]:
@@ -83,13 +84,13 @@ def write_to_db(db, plans, lists, program_name, year):
                         courses = lists[list]["courses"]
                         print(courses)
                         entry = EngineeringDisciplineModel(
-                                        discipline_name=program_name, 
-                                        course_codes=", ".join(courses), 
-                                        number_of_courses=count,
-                                        link=link_map[program_name],
-                                        year=year,
-                                        term=term
-                                    )
+                            discipline_name=program_name,
+                            course_codes=", ".join(courses),
+                            number_of_courses=count,
+                            link=link_map[program_name],
+                            year=year,
+                            term=term
+                        )
                         db.add(entry)
     db.commit()
 
@@ -113,9 +114,9 @@ def parse_csv(db, file):
     lists = {}
 
     discipline = EngineeringDiscipline()
-    
+
     with open(file) as file:
-        reader_obj = csv.reader(file) 
+        reader_obj = csv.reader(file)
         for row in reader_obj:
             type = row[0] if row[0] else type
             name = row[1] if row[1] else name
@@ -145,7 +146,7 @@ def parse_csv(db, file):
             elif type == "list":
                 if not name in lists:
                     lists[name] = {"count": 0}
-                
+
                 if category == "list":
                     if not "lists" in lists[name]:
                         lists[name]["lists"] = [course_ref]
@@ -155,17 +156,13 @@ def parse_csv(db, file):
                     if not "courses" in lists[name]:
                         lists[name]["courses"] = [category + course_ref]
                     else:
-                        lists[name]["courses"].append(category + course_ref) 
-        # print(plan)
+                        lists[name]["courses"].append(category + course_ref)
+                        # print(plan)
         lists = flatten_lists(lists)
         # print(lists)
-    write_to_db(db, plan, lists, program_name, year)    
+    write_to_db(db, plan, lists, program_name, year)
 
 
-
-                
-
-            
 # ECE 
 # {
 #     "1A": 
@@ -173,7 +170,7 @@ def parse_csv(db, file):
 #             "courses": ["MSCI100", "MSCI123"],
 #             "lists": ["mgte_te", "mgte_te"]
 #         }
-    
+
 # }
 
 # {
@@ -185,6 +182,5 @@ def parse_csv(db, file):
 #         }
 # }
 
-            
 
 get_files(db)

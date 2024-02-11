@@ -33,7 +33,8 @@ def add_courses_to_db(db: Session):
             course_name = row[3]
             description = row[4]
             requirements_description = row[5]
-            course = CourseModel(course_code=course_code, course_name=course_name, description=description, requirements_description=requirements_description)
+            course = CourseModel(course_code=course_code, course_name=course_name, description=description,
+                                 requirements_description=requirements_description)
             db.add(course)
             db.flush()
             if requirements_description:
@@ -47,17 +48,19 @@ def add_courses_to_db(db: Session):
                     antireqs_string = requirements_description[index:]
 
                     parsed_antireqs = load_antireqs(antireqs_string)
-                    antireq = AntirequisiteModel(course_id=course.id, courses=parsed_antireqs["courses"], extra_info=parsed_antireqs["extra_info"])
+                    antireq = AntirequisiteModel(course_id=course.id, courses=parsed_antireqs["courses"],
+                                                 extra_info=parsed_antireqs["extra_info"])
                     # print(antireq.courses)
                     db.add(antireq)
                 else:
                     prereqs_string = requirements_description
-                    
+
                 parsed_prereqs = load_prereqs(prereqs_string)
-                prereq = PrerequisiteModel(course_id=course.id, logic=parsed_prereqs['logic'], courses=parsed_prereqs['courses'])
+                prereq = PrerequisiteModel(course_id=course.id, logic=parsed_prereqs['logic'],
+                                           courses=parsed_prereqs['courses'])
                 # print(prereq.courses)
                 db.add(prereq)
-                
+
             if i % 1000 == 0:
                 db.commit()
                 print("committed ", str(i), " entries to the db")
@@ -87,19 +90,18 @@ def add_degrees_to_db(db: Session):
             link = row[4]
             year = row[5]
             discipline = EngineeringDisciplineModel(
-                            discipline_name=discipline_name, 
-                            course_codes=course_codes, 
-                            number_of_courses=number_of_courses,  
-                            additional_requirements=additional_requirements,
-                            link=link,
-                            year=year
-                        )
+                discipline_name=discipline_name,
+                course_codes=course_codes,
+                number_of_courses=number_of_courses,
+                additional_requirements=additional_requirements,
+                link=link,
+                year=year
+            )
             db.add(discipline)
 
         db.commit()
 
 
-db = SessionLocal() 
+db = SessionLocal()
 add_degrees_to_db(db)
 add_courses_to_db(db)
-

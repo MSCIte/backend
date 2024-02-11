@@ -81,5 +81,4 @@ def can_take_course(db: Session, courses_taken: list[str], course: str):
         # msg.send()
         return
 
-
 # print(can_take_course(db, ["LOL 1001", "CS 135"], "ACTSC127"))

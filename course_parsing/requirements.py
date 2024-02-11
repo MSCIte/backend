@@ -16,6 +16,7 @@ def letters_to_courses(options, courses):
     output = output[:-3]
     return output
 
+
 def load_prereqs(prereqs, course_code=""):
     """
     Parses the necessary prerequisite data.
@@ -90,12 +91,12 @@ def load_prereqs(prereqs, course_code=""):
 
     # Remove entire block that includes "Open only ...;" and "Level at ...;"
     prereqs = re.sub("((?:Open only to students in .+[.;])|"
-                        "(?:[Ll]ev(?:el)? at [^.;>&<,]+))", " ", prereqs)
+                     "(?:[Ll]ev(?:el)? at [^.;>&<,]+))", " ", prereqs)
 
     # Remove XX% and 2A like text
     prereqs = re.sub("((?:[1-9][0-9]%)|"
-                        "(?:[^0-9][1-9][A-Z]))", " ",
-                        prereqs)
+                     "(?:[^0-9][1-9][A-Z]))", " ",
+                     prereqs)
 
     # Remove all words
     prereqs = re.sub("[a-zA-Z\\-]*[a-z][a-zA-Z\\-]*", "", prereqs)
@@ -145,7 +146,7 @@ def load_prereqs(prereqs, course_code=""):
     grep = "[A-Z]+ /\\||(?:[A-Z]+[ ]?)?[0-9][0-9][0-9][A-Z0]?|[A-Z][A-Z]+"
     courses = re.findall(grep, prereqs)
     indexes = [(m.start(0), m.end(0)) for m in
-                re.finditer(grep, prereqs)]
+               re.finditer(grep, prereqs)]
 
     # Generate new course codes by turning ["CS 135", "145"] into ["CS 135", "CS 145"]
     new_courses = []
@@ -165,26 +166,26 @@ def load_prereqs(prereqs, course_code=""):
 
     # Loop backwards to replace each course with a respective letter
     courses = new_courses
-    for i in range(len(courses)-1, -1, -1):
+    for i in range(len(courses) - 1, -1, -1):
 
         # If course had no number, use the number from lookahead
         if courses[i].endswith(" "):
-            if i < len(courses)-1:
-                courses[i] += re.findall("[0-9][0-9][0-9][A-Z0]?", courses[i+1])[0]
+            if i < len(courses) - 1:
+                courses[i] += re.findall("[0-9][0-9][0-9][A-Z0]?", courses[i + 1])[0]
             else:
                 courses[i] += "0000"
 
         # If the course ahead ends with a letter, the current does not and they have different codes, add the
         # letter from lookahead to the end if the current course.
-        elif i < len(courses)-1 and courses[i][-1] in "1234567890" and \
-                courses[i+1][-1] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" and \
-                courses[i][-3:] != courses[i+1][-4:-1] and prereqs[indexes[i][1]+1:indexes[i][1]+3] == "/|":
-            courses[i] += courses[i+1][-1]
+        elif i < len(courses) - 1 and courses[i][-1] in "1234567890" and \
+                courses[i + 1][-1] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" and \
+                courses[i][-3:] != courses[i + 1][-4:-1] and prereqs[indexes[i][1] + 1:indexes[i][1] + 3] == "/|":
+            courses[i] += courses[i + 1][-1]
 
         # Generate a condition string for the current course to the next
         string = " "
-        if prereqs[indexes[i][1]-1] == "|":
-            if prereqs[indexes[i][1]-2] == "/":
+        if prereqs[indexes[i][1] - 1] == "|":
+            if prereqs[indexes[i][1] - 2] == "/":
                 string = " /| "
             else:
                 string = " | "
@@ -205,11 +206,11 @@ def load_prereqs(prereqs, course_code=""):
 
     # Replace "2 A , < B & C > /| D" with "< 2 A | < B & C > | D >"
     comma_indices = [(m.start(0), m.end(0)) for m in
-                        re.finditer("[1-9] ([A-Za-z]|< [^>]+ >)(?:\\s*(,|/\\||\\|)\\s*([A-Za-z]|< [^>]+ >))+", prereqs)]
-    for i in range(len(comma_indices)-1, -1, -1):
+                     re.finditer("[1-9] ([A-Za-z]|< [^>]+ >)(?:\\s*(,|/\\||\\|)\\s*([A-Za-z]|< [^>]+ >))+", prereqs)]
+    for i in range(len(comma_indices) - 1, -1, -1):
         start, end = comma_indices[i]
         prereqs = prereqs[:start] + " < " + prereqs[start:end].replace(",", " | ") + \
-                    " > " + prereqs[end:]
+                  " > " + prereqs[end:]
 
     # Enclose all remaining /| groupings with < >
     prereqs = re.sub("((?:[A-Za-z]|< .+ >)(?:\\s*/\\|\\s*(?:[A-Za-z]|< .+ >))+)", r"< \1 >", prereqs)
@@ -226,7 +227,7 @@ def load_prereqs(prereqs, course_code=""):
     prereqs = prereqs.replace("1 ", "")
 
     # Encapsulate prereqs with < >
-    prereqs  = "< " + prereqs.strip() + " >"
+    prereqs = "< " + prereqs.strip() + " >"
 
     # try:
     if not len(courses):
@@ -241,7 +242,6 @@ def load_prereqs(prereqs, course_code=""):
         # Modify courses to indicate coreqs
         courses = denote_coreqs(prereqs, courses)
         prereqs = translate_to_python(prereqs)
-
 
         # print(prereqs)
         # print(courses)
@@ -272,6 +272,7 @@ def load_prereqs(prereqs, course_code=""):
 
     return {"logic": prereqs, "courses": prereq_json}
 
+
 def __prereqs(self, prereqs):
     """
     Depreciated
@@ -301,7 +302,7 @@ def __prereqs(self, prereqs):
 
             change = True
             match = re.findall("(?:..% (?:or higher )?in (?:one of )?)?(?:[A-Z]+ )?[1-9][0-9][0-9]" +
-                                "(?: with (?:(?:a )?(?:minimum )?grade of )?(?:at least )?..%)?", c)
+                               "(?: with (?:(?:a )?(?:minimum )?grade of )?(?:at least )?..%)?", c)
             for m in match:
                 if "or" in m:
                     change = False
@@ -323,6 +324,7 @@ def __prereqs(self, prereqs):
                 self.prereqs.append(pre)
                 self.min_grade.append(grades)
 
+
 def __not_open(self, prereqs):
     """
     Modifies the field(s):
@@ -338,6 +340,7 @@ def __not_open(self, prereqs):
         m2 = re.search("Not open to students who have received credit for ([A-Z]+ [1-9][0-9][0-9])+", category)
         if m2:
             self.not_open = re.split(',| & ', m2.group(1))
+
 
 def __students_only(self, prereqs):
     """
@@ -359,6 +362,7 @@ def __students_only(self, prereqs):
             self.students_only = re.split(", | or ", m2)
             break
 
+
 def __min_level(self, prereqs):
     """
     Modifies the field(s):
@@ -373,8 +377,9 @@ def __min_level(self, prereqs):
             self.min_level = m.group()[-2:]
             break
 
+
 def prettyprint(self, printer=True):
-    output =  "Prereqs:\t\t" + str(self.prereqs) + "\n"
+    output = "Prereqs:\t\t" + str(self.prereqs) + "\n"
     output += "Min Grades:\t\t" + str(self.min_grade) + "\n"
     output += "Not open:\t\t" + str(self.not_open) + "\n"
     output += "Students only:\t" + str(self.students_only) + "\n"
@@ -383,6 +388,7 @@ def prettyprint(self, printer=True):
         print(output)
     else:
         return output
+
 
 def __print_prereqs(self):
     output = ""
@@ -407,6 +413,7 @@ def __print_prereqs(self):
             output += ", "
     return output
 
+
 def __print_grades(self):
     output = ""
     for i, grades in enumerate(self.min_grade):
@@ -416,6 +423,7 @@ def __print_grades(self):
                 output += ", "
     return output
 
+
 def __print_not_open(self):
     output = ""
     for i, not_open in enumerate(self.not_open):
@@ -423,6 +431,7 @@ def __print_not_open(self):
         if i != len(self.not_open) - 1:
             output += ", "
     return output
+
 
 def __print_only(self):
     output = ""
@@ -432,8 +441,10 @@ def __print_only(self):
             output += ", "
     return output
 
+
 def __print_level(self):
     return self.min_level
+
 
 def str(self, flag="prereqs"):
     """
@@ -479,14 +490,14 @@ def load_antireqs(antireqs):
 
     for _ in range(1):
         antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3})([A-Z])\\s*/\\s*([A-Z])",
-                            r"\1 \2\3, \1 \2\4", antireqs)
+                          r"\1 \2\3, \1 \2\4", antireqs)
         antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)(?:\\s*/\\s*|\\s*,\\s*)([0-9]{3}[A-Z]?[A-Z]?)",
-                            r"\1 \2, \1 \3", antireqs)
+                          r"\1 \2, \1 \3", antireqs)
         antireqs = re.sub("([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)(?:\\s*/\\s*|\\s*,\\s*)"
-                            "([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)",
-                            r"\1 \2, \3 \4", antireqs)
+                          "([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)",
+                          r"\1 \2, \3 \4", antireqs)
         antireqs = re.sub("([A-Z][A-Z]+)\\s*(?:\\s*/\\s*|\\s*,\\s*)([A-Z][A-Z]+)\\s*([0-9]{3}[A-Z]?[A-Z]?)",
-                            r"\1 \3, \2 \3", antireqs)
+                          r"\1 \3, \2 \3", antireqs)
 
     antireqs = re.findall("(?:[A-Z]+ )?[1-9][0-9][0-9][A-Z]?[A-Z]?", antireqs)
     extra_info = antireqs if not len(antireqs) else ""
@@ -495,6 +506,7 @@ def load_antireqs(antireqs):
     antireqs_json = json.dumps(antireqs)
 
     return {"courses": antireqs_json, "extra_info": extra_info}
+
 
 def fix_antireqs(antireqs):
     code = ""
@@ -510,6 +522,7 @@ def fix_antireqs(antireqs):
 
         antireqs[i] = antireq
 
+
 def str(self, flag="antireqs"):
     output = ""
 
@@ -523,7 +536,7 @@ def str(self, flag="antireqs"):
         output = self.extra_info
 
     return output
-    
+
 
 # Examples
 examples = [
@@ -541,4 +554,3 @@ examples = [
 for example in examples:
     result = load_antireqs(example)
     print(result)
-    

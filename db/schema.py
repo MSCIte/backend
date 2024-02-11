@@ -109,4 +109,3 @@ class DegreeRequirement(CamelModel):
 class DegreeReqs(CamelModel):
     mandatory_courses: list[str]
     additional_reqs: dict[str, DegreeRequirement]
-

@@ -23,7 +23,6 @@ class CourseModel(Base):
     def __str__(self):
         return self.course_code
 
-    
 
 class OptionsModel(Base):
     __allow_unmapped__ = True
@@ -50,15 +49,16 @@ class EngineeringDisciplineModel(Base):
     link = Column(String, unique=False)
     year = Column(String, unique=False)
 
+
 class PrerequisiteModel(Base):
     __allow_unmapped__ = True
     __tablename__ = 'prerequisites'
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey('courses.id'))
     logic = Column('logic', String, unique=False, index=True)
-    courses =Column('courses', String, unique=False, index=True)
+    courses = Column('courses', String, unique=False, index=True)
     min_level = Column('min_level', String, unique=False, index=True)
-    
+
 
 class AntirequisiteModel(Base):
     __allow_unmapped__ = True
@@ -67,4 +67,3 @@ class AntirequisiteModel(Base):
     course_id = Column('course_id', Integer, ForeignKey('courses.id'))
     courses = Column('courses', String, unique=False, index=True)
     extra_info = Column('extra_info', String, unique=False)
-

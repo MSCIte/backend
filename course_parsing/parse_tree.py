@@ -5,12 +5,16 @@ import re
 class Stack:
     def __init__(self):
         self._data = []
+
     def push(self, x):
         self._data.append(x)
+
     def pop(self):
         return self._data.pop()
+
     def peek(self):
         return self._data[-1]
+
     def __len__(self):
         return len(self._data)
 
@@ -38,18 +42,18 @@ def remove_dup_bracket(logic):
         if s[i] != "$":
             s[i] = logic[i]
             if s[i] == "<":
-                if i + 1 < n and s[i+1] in "&|":
-                    s[i+1] = "$"
+                if i + 1 < n and s[i + 1] in "&|":
+                    s[i + 1] = "$"
                     stack.push(i)
-                elif i + 1 < n and s[i+1] == ">":
-                    if i == 0 or s[i-1] in "&|":
+                elif i + 1 < n and s[i + 1] == ">":
+                    if i == 0 or s[i - 1] in "&|":
                         s[i] = "True"
                     else:
                         s[i] = "$"
-                    s[i+1] = "$"
-                elif i + 2 < n and s[i+2] == ">":
+                    s[i + 1] = "$"
+                elif i + 2 < n and s[i + 2] == ">":
                     s[i] = "$"
-                    s[i+2] = "$"
+                    s[i + 2] = "$"
                 else:
                     stack.push(i)
 
@@ -57,16 +61,16 @@ def remove_dup_bracket(logic):
                 if len(stack):
                     start = stack.pop()
                     if (start == 0 and i == n - 1) or \
-                       (i > 0 and s[start-1] == "<" and i < n - 1 and s[i+1] == ">"):
+                            (i > 0 and s[start - 1] == "<" and i < n - 1 and s[i + 1] == ">"):
                         s[start] = "$"
                         s[i] = "$"
-                    if s[i-1] in ("&", "|", "not"):
-                        s[i-1] = "$"
+                    if s[i - 1] in ("&", "|", "not"):
+                        s[i - 1] = "$"
                 else:
                     s[i] = "$"
             elif s[i] == "~":
                 s[i] = "not"
-            elif (i + 1 < n and s[i+1] == s[i]) or s[i] == "-":
+            elif (i + 1 < n and s[i + 1] == s[i]) or s[i] == "-":
                 s[i] = "$"
     while len(stack):
         i = stack.pop()
@@ -97,7 +101,7 @@ def translate_to_python(logic, courses=None):
         start = 0
         for i in range(len(courses)):
             x = logic[start:].index(get_char(i))
-            logic[start+x] = courses[i]
+            logic[start + x] = courses[i]
             start = x + 1
 
     logic = " ".join(logic)
@@ -144,7 +148,7 @@ class ParseTree:
         output = "  " * level + self.val
         output += "\n"
         for child in self.children:
-            output += "  " * level + child.__str__(level+1)
+            output += "  " * level + child.__str__(level + 1)
         return output
 
     def combine(self, c1, c2):
@@ -176,7 +180,6 @@ class ParseTree:
             else:
                 opt = [child_opt]
         return opt
-
 
 
 def buildParseTree(text):
