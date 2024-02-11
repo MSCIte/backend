@@ -66,12 +66,36 @@ def get_degree_reqs(degree_name: str, year: str, db: Session):
     return requirements
 
 
-def get_degree_missing_reqs(degree_id: str, courses_taken: list[str], year: str) -> DegreeMissingReqs:
-    reqs = (
-        db.query(EngineeringDisciplineModel)
-        .where(and_(EngineeringDisciplineModel.discipline_name == degree_id, EngineeringDisciplineModel.year == year))
-        .all()
-    )
+def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year: str, db: Session) -> DegreeMissingReqs:
+    if (
+        db.query(
+            db.query(func.count())
+            .filter(
+                and_(
+                    EngineeringDisciplineModel.discipline_name == degree_id,
+                    EngineeringDisciplineModel.year == year
+                )
+            )
+            .scalar()
+        ).scalar() > 0
+    ):
+        reqs = (
+            db.query(EngineeringDisciplineModel)
+            .where(and_(EngineeringDisciplineModel.discipline_name == degree_id, EngineeringDisciplineModel.year == year))
+            .all()
+        )
+    else:
+        latest_year = (
+            db.query(func.max(EngineeringDisciplineModel.year))
+            .filter(EngineeringDisciplineModel.discipline_name == degree_id)
+            .scalar()
+        )
+        reqs = (
+            db.query(EngineeringDisciplineModel)
+            .where(and_(EngineeringDisciplineModel.discipline_name == degree_id, EngineeringDisciplineModel.year == latest_year))
+            .all()
+        )
+    
 
     missing_courses = DegreeMissingReqs(mandatory_courses=[], additional_reqs={})
 
@@ -84,7 +108,7 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: list[str], year: str)
                 for course_code in course_codes:
                     temp_dict[course_code] = 0
 
-                for course_taken in courses_taken:
+                for course_taken in courses_taken.course_codes_taken:
                     if course_taken in temp_dict:
                         count += 1
 
@@ -121,41 +145,7 @@ def get_options_reqs(option_id: str, year: str, db: Session) -> OptionsSchema:
         res["requirements"].append(OptionRequirement(**course_map))
 
     return res
-    
-    # for row in rows:
-    #     
-    #     if row["courses"][0] in ["TE", "CSE", "Communication Elective"]:
-    #         if row["courses"][0] == "TE":
-    #             te_count += row["number_of_courses"]
-    #         elif row["courses"][0] == "CSE":
-    #             cse_count += row["number_of_courses"]
-    #         else:
-    #             ce_count += row["number_of_courses"]
 
-    #     elif row["number_of_courses"] == 1:
-    #         res['mandatory_courses'] += courses
-    #     else:
-    #         spec_req = {
-    #             "requirement_type": "CHOOSE_{}_OF_{}".format(row["number_of_courses"], len(row["courses"])),
-    #             "required_count": row["number_of_courses"],
-    #             "courses_to_choose_from": courses,
-    #         }
-    #         res['special_requirements'].append(spec_req)
-
-    # res["elective_requirements"].append({
-    #             "requirement_type": "TE",
-    #             "required_count": te_count,
-    # })
-
-    # res["elective_requirements"].append({
-    #             "requirement_type": "CSE",
-    #             "required_count": cse_count,
-    # })
-
-    # res["elective_requirements"].append({
-    #             "requirement_type": "Communication Elective",
-    #             "required_count": ce_count,
-    #         })
 
 def find_missing_requirements(course_list, requirements):
     missing_requirements = []

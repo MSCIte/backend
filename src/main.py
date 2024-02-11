@@ -71,7 +71,7 @@ def options_missing_reqs(opt_id: str, courses_taken: CoursesTakenIn, year: str, 
 
 #done
 @app.get('/degree/{degree_name}/reqs', response_model=DegreeReqs)
-def degree_reqs(degree_name: str, year: str, db: Session = Depends(get_db)) -> list[CourseSchema]:
+def degree_reqs(degree_name: str, year: str, db: Session = Depends(get_db)):
     reqs = get_degree_reqs(degree_name, year, db)
     return reqs
 
@@ -82,14 +82,14 @@ def degrees(db: Session = Depends(get_db)) -> list[str]:
     return degrees
 
 #done 
-@app.get('/degree/{degree_id}/missing_reqs')
-def degree_missing_reqs(degree_id: str, courses_taken: list[str], year: str,  db: Session = Depends(get_db)) -> DegreeMissingReqs:
-    missing_reqs = get_degree_missing_reqs(degree_id, courses_taken, year)
+@app.get('/degree/{degree_id}/missing_reqs', response_model=DegreeMissingReqs)
+def degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year: str,  db: Session = Depends(get_db)):
+    missing_reqs = get_degree_missing_reqs(degree_id, courses_taken, year, db)
     return missing_reqs
 
 #done
-@app.get('/courses/can-take/{course_code}')
-def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Session = Depends(get_db)) -> RequirementsResults:
+@app.get('/courses/can-take/{course_code}', response_model=RequirementsResults)
+def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Session = Depends(get_db)):
     can_take = can_take_course(db, courses_taken.course_codes_taken, course_code)
     res = RequirementsResults(result=can_take[0], message=can_take[1])
     return res
