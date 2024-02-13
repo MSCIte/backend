@@ -7,7 +7,7 @@ from sqlalchemy import and_, func
 from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel
 from db.database import SessionLocal
 from db.schema import OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, AdditionalReqCount, \
-    DegreeReqs, DegreeRequirement, CourseWithTagsSchema
+    DegreeReqs, DegreeRequirement, CourseWithTagsSchema, TagSchema
 import re
 
 db = SessionLocal()
@@ -102,22 +102,54 @@ def populate_courses_tags(degree_name: str, year: str, courses: list[CourseWithT
 
     # print("Populated course tags", courses)
 
-    pass
 
-
-# @lru_cache()
+@lru_cache()
 def populate_course_tags(degree_name: str, year: str, course: CourseWithTagsSchema) -> None:
     print("Attempting to populate tag for ", course.course_code)
     tags = get_degree_tags(degree_name=degree_name, degree_year=year)
-    if course.course_code in tags:
-        print("Exists!!!!")
-        # print("setting tag", course.course_code, tags[course.course_code])
-        course.tags = tags[course.course_code]
-        return None
-    return None
+    print("== degree tags", tags)
+    # EngineeringDisciplines table has no space in course codes, other tables do
+    course_code_no_space = course.course_code.replace(" ", "")
+    course_tags = tags[course_code_no_space] if course_code_no_space in tags else ['ELEC']
+    course.tags = [tag_name_to_object(tag_name) for tag_name in course_tags]
+    return
 
 
-# @functools.cache  # This should never change so we can indefinitely cache it
+def tag_name_to_object(tag_name: str) -> TagSchema:
+    # blue = mandatory major requirement
+    # red = TE
+    # yellow = other requirement
+    # purple = option requirement
+    # green = elective
+    name_to_schema = {
+        "1A": TagSchema(code='1A', color='blue', short_name='1A', long_name='1A'),
+        "1B": TagSchema(code='1B', color='blue', short_name='1B', long_name='1B'),
+        "2A": TagSchema(code='2A', color='blue', short_name='2A', long_name='2A'),
+        "2B": TagSchema(code='2B', color='blue', short_name='2B', long_name='2B'),
+        "3A": TagSchema(code='3A', color='blue', short_name='3A', long_name='3A'),
+        "3B": TagSchema(code='3B', color='blue', short_name='3B', long_name='3B'),
+        "4A": TagSchema(code='4A', color='blue', short_name='4A', long_name='4A'),
+        "4B": TagSchema(code='4B', color='blue', short_name='4B', long_name='4B'),
+        "ATE": TagSchema(code='ATE', color='red', short_name='ATE', long_name='ATE'),
+        "CSE": TagSchema(code='CSE', color='yellow', short_name='CSE', long_name='Complimentary Studies Elective'),
+        "ELEC": TagSchema(code='ELEC', color='green', short_name='ELEC', long_name='Elective'),
+        "ETHICS": TagSchema(code='ETHICS', color='yellow', short_name='ETHICS', long_name='Ethics'),
+        "LE": TagSchema(code='LE', color='yellow', short_name='LE', long_name='Linkage Electives'),
+        "MLSTN": TagSchema(code='MLSTN', color='green', short_name='MLSTN', long_name='Milestone'),
+        "NSE": TagSchema(code='NSE', color='yellow', short_name='NSE', long_name='Natural Science Elective'),
+        "PD": TagSchema(code='PD', color='yellow', short_name='PD', long_name='Professional Development'),
+        "PDENG": TagSchema(code='PDENG', color='yellow', short_name='PDENG', long_name='Professional Development'),
+        "PRACTICE": TagSchema(code='PRACTICE', color='yellow', short_name='PRACTICE', long_name='Practice'),
+        "TE": TagSchema(code='TE', color='red', short_name='TE', long_name='Technical Elective'),
+        "WKRPT": TagSchema(code='WKRPT', color='yellow', short_name='WKRPT', long_name='Work Report'),
+        "WKTRM": TagSchema(code='WKTRM', color='yellow', short_name='WKTRM', long_name='Work Term'),
+        "WTREF": TagSchema(code='WTREF', color='yellow', short_name='WTREF', long_name='Work Term Reflection'),
+    }
+
+    return name_to_schema[tag_name]
+
+
+@functools.cache  # This should never change so we can indefinitely cache it
 def get_degree_tags(degree_name: str, degree_year: str):
     # TODO: Implement logic that takes into account the case that 2015 and 2017 are published, but one requests for
     #  2016 (it should return 2015 but currently returns 2017)
@@ -160,12 +192,15 @@ def get_degree_tags(degree_name: str, degree_year: str):
     return tags_dict
 
 
-def search_and_populate_courses(q: str, offset: int, degree_year: int, degree_name: str) -> list[CourseWithTagsSchema]:
+def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size: int, degree_name: str) -> list[
+    CourseWithTagsSchema]:
     courses = (db.query(CourseModel).order_by(
         (CourseModel.course_code + " " + CourseModel.course_name).op("<->")(q).asc(),
-    ).offset(offset).limit(100)).all()
+    ).offset(offset).limit(page_size)).all()
 
+    print("pre-populate", courses)
     populate_courses_tags(degree_name=degree_name, year=degree_year, courses=courses)
+    print("post-populate", courses)
     return courses
 
 

@@ -1,6 +1,6 @@
 from typing import Annotated
 import requests
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Path
 from fastapi.middleware.cors import CORSMiddleware
 from db.models import CourseModel, EngineeringDisciplineModel
 from db.schema import CourseSchema, CourseWithTagsSchema, OptionsSchema, OptionRequirement, DegreeMissingReqs, \
@@ -108,9 +108,10 @@ def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Sessio
 @app.get('/courses/search', response_model=list[CourseWithTagsSchema])
 # @app.get('/courses/search')
 def search_courses(q: str | None = None, offset: Annotated[int | None, "bruh"] = 0,
+                   page_size: Annotated[int | None, Path(title="Number of results returned", ge=1, le=100)] = 20,
                    degree_name: Annotated[str | None, "The degree name, e.g. 'management_engineering'"] = None,
                    degree_year: Annotated[str | None, "The year the plan was declared"] = None):
-    courses = search_and_populate_courses(q=q, offset=offset, degree_name=degree_name, degree_year=degree_year)
+    courses = search_and_populate_courses(q=q, offset=offset, page_size=page_size, degree_name=degree_name, degree_year=degree_year)
     return courses
 
 
