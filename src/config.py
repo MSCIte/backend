@@ -3,6 +3,8 @@ import os
 from dotenv import dotenv_values
 from functools import lru_cache
 
+import logging
+
 
 @lru_cache()
 def get_env():
@@ -16,6 +18,8 @@ def get_env():
             **dotenv_values(".env.dev"),
             **dotenv_values(".env.dev.local")
         }
+        logging.basicConfig()
+        logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
     env = {
         **dotenv_values(".env.shared"),  # load shared development variables

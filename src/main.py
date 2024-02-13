@@ -2,19 +2,22 @@ from typing import Annotated
 import requests
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from db.models import CourseModel
+from db.models import CourseModel, EngineeringDisciplineModel
 from db.schema import CourseSchema, CourseWithTagsSchema, OptionsSchema, OptionRequirement, DegreeMissingReqs, \
     DegreeReqs
+from collections import defaultdict
 from db.schema import CoursesTakenIn, RequirementsResults
 from db.database import SessionLocal
 from sqladmin import Admin
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 
 from db import engine
 from db.admin import admin_views
 from db.database import SessionLocal
 from .validation import can_take_course
-from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_missing_reqs, get_option_missing_reqs
+from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_missing_reqs, get_option_missing_reqs, \
+    get_degree_tags, search_and_populate_courses
 
 app = FastAPI()
 
@@ -103,24 +106,18 @@ def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Sessio
 
 # done
 @app.get('/courses/search', response_model=list[CourseWithTagsSchema])
-def search_courses(q: str | None = None, offset: Annotated[int | None, "bruh"] = 0, db: Session = Depends(get_db)):
-    # https://stackoverflow.com/a/71147604
-    def has_numbers(input_string: str) -> bool:
-        return any(char.isdigit() for char in input_string)
-
-    # if has_numbers(q):
-    # Searching for specific course code
-    courses = db.query(CourseModel).order_by(
-        (CourseModel.course_code + " " + CourseModel.course_name).op("<->")(q).asc(),
-    ).offset(offset).limit(100).all()
-    # else:
-    #     # Searching by course name only
-    #     # Use <-> for performance
-    #     courses = db.query(CourseModel).order_by(
-    #         CourseModel.course_name.op("<->")(q).asc()
-    #     ).offset(offset).limit(100).all()
-
+# @app.get('/courses/search')
+def search_courses(q: str | None = None, offset: Annotated[int | None, "bruh"] = 0,
+                   degree_name: Annotated[str | None, "The degree name, e.g. 'management_engineering'"] = None,
+                   degree_year: Annotated[str | None, "The year the plan was declared"] = None):
+    courses = search_and_populate_courses(q=q, offset=offset, degree_name=degree_name, degree_year=degree_year)
     return courses
+
+
+@app.get('/courses/tags')
+def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineering'"],
+         degree_year: Annotated[str, "The year the plan was declared"]):
+    return get_degree_tags(degree_name, degree_year)
 
 
 @app.get('/sample-path')

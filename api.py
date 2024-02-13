@@ -1,9 +1,13 @@
+import functools
+from collections import defaultdict
+from functools import lru_cache
+
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
-from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel
+from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel
 from db.database import SessionLocal
 from db.schema import OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, AdditionalReqCount, \
-    DegreeReqs, DegreeRequirement
+    DegreeReqs, DegreeRequirement, CourseWithTagsSchema
 import re
 
 db = SessionLocal()
@@ -20,6 +24,19 @@ def get_all_degrees(db: Session):
     degree_map = {degree.discipline_name.lower().replace(' ', '_'): degree.discipline_name for degree in
                   db.query(EngineeringDisciplineModel.discipline_name).distinct()}
     return degree_map
+
+
+def is_degree_exist_for_year(degree_name: str, year: str, db: Session):
+    return db.query(
+        db.query(func.count())
+        .filter(
+            and_(
+                EngineeringDisciplineModel.discipline_name == degree_name,
+                EngineeringDisciplineModel.year == year
+            )
+        )
+        .scalar()
+    ).scalar() > 0
 
 
 # add logic to select most recent year
@@ -71,6 +88,85 @@ def get_degree_reqs(degree_name: str, year: str, db: Session):
                 requirements.mandatory_courses += courses
 
     return requirements
+
+
+def populate_courses_tags(degree_name: str, year: str, courses: list[CourseWithTagsSchema]):
+    # Make sure all the courses exist
+    # if (db.query(func.count(CourseModel.course_code))
+    #         .filter(CourseModel.course_code.in_([course.course_code for course in courses]))
+    #         .scalar() is None):
+    #     return None
+    print("Populating course tags", degree_name)
+    for course in courses:
+        populate_course_tags(degree_name=degree_name, year=year, course=course)
+
+    # print("Populated course tags", courses)
+
+    pass
+
+
+# @lru_cache()
+def populate_course_tags(degree_name: str, year: str, course: CourseWithTagsSchema) -> None:
+    print("Attempting to populate tag for ", course.course_code)
+    tags = get_degree_tags(degree_name=degree_name, degree_year=year)
+    if course.course_code in tags:
+        print("Exists!!!!")
+        # print("setting tag", course.course_code, tags[course.course_code])
+        course.tags = tags[course.course_code]
+        return None
+    return None
+
+
+# @functools.cache  # This should never change so we can indefinitely cache it
+def get_degree_tags(degree_name: str, degree_year: str):
+    # TODO: Implement logic that takes into account the case that 2015 and 2017 are published, but one requests for
+    #  2016 (it should return 2015 but currently returns 2017)
+    if is_degree_exist_for_year(degree_name, degree_year, db):
+        tags = (
+            db.query(EngineeringDisciplineModel.discipline_name,
+                     EngineeringDisciplineModel.course_codes,
+                     EngineeringDisciplineModel.term).filter(
+                and_(
+                    EngineeringDisciplineModel.discipline_name == degree_name,
+                    EngineeringDisciplineModel.year == str(degree_year)
+                )
+            )).all()
+    else:
+        latest_year = (
+            db.query(func.max(EngineeringDisciplineModel.year))
+            .filter(EngineeringDisciplineModel.discipline_name == degree_name)
+            .scalar()
+        )
+        tags = (
+            db.query(EngineeringDisciplineModel.discipline_name,
+                     EngineeringDisciplineModel.course_codes,
+                     EngineeringDisciplineModel.term).filter(
+                and_(
+                    EngineeringDisciplineModel.discipline_name == degree_name,
+                    EngineeringDisciplineModel.year == str(latest_year)
+                )
+            )).all()
+
+    # [('management_engineering', 'CHE102', '1A'), ('management_engineering', 'MSCI100', '1A'),
+    #  ('management_engineering', 'MATH115', '1A'), ('management_engineering', 'CHE102', '1A'),
+    #  ('management_engineering', 'MSCI100', '1A'), ('management_engineering', 'MATH115', '1A'),
+    #  ('management_engineering', 'MATH116', '1A'), ('management_engineering', 'PHYS115', '1A')]
+
+    # Reduce the tags by course code
+    tags_dict = defaultdict(set)
+    for tags_tuple in tags:
+        for course_code in tags_tuple[1].split(","):
+            tags_dict[course_code].add(tags_tuple[2])
+    return tags_dict
+
+
+def search_and_populate_courses(q: str, offset: int, degree_year: int, degree_name: str) -> list[CourseWithTagsSchema]:
+    courses = (db.query(CourseModel).order_by(
+        (CourseModel.course_code + " " + CourseModel.course_name).op("<->")(q).asc(),
+    ).offset(offset).limit(100)).all()
+
+    populate_courses_tags(degree_name=degree_name, year=degree_year, courses=courses)
+    return courses
 
 
 def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year: str, db: Session) -> DegreeMissingReqs:

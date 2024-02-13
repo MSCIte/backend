@@ -58,7 +58,7 @@ def get_files(db):
     for path, folders, files in os.walk(root_dir):
         if path.endswith("degree_requirements"):
             for file in files:
-                file_name = path + "\\" + file
+                file_name = path + "/" + file
                 parse_csv(db, file_name)
 
 
@@ -104,6 +104,31 @@ def flatten_lists(lists):
                     list["courses"] = list.get("courses", []) + lists[sublist]["courses"]
     return lists
 
+
+# BME123 -> BME 123
+def add_space_to_course_codes(flattened_lists):
+    for f_list in flattened_lists.values():
+        if "courses" in f_list:
+            for course in f_list["courses"]:
+                # All letters in course
+                print("Course", course)
+                dept_code = [char for char in course if char.isalpha()]
+                course_num = [char for char in course if char.isdigit()]
+                f_list["courses"].append(f"{course[0].join('')} {course_num[1].join('')}")
+    return flattened_lists
+
+
+# TODO: There's some course codes like BME4* that need to be expanded
+def expand_wildcards(flattened_lists):
+    # for f_list in flattened_lists.values():
+    #     if "courses" in f_list:
+    #         for course in f_list["courses"]:
+    #             if "*" in course:
+    #                 dept_code = [char for char in course if char.isalpha()]
+    #                 course_num = [char for char in course if char.isdigit()]
+    #                 for i in range(10):
+    #                     f_list["courses"].append(f"{dept_code.join('')} {course_num.join('')}")
+    return flattened_lists
 
 def parse_csv(db, file):
     program_shorthand = re.search(r'[A-Z]+', file).group()
@@ -159,8 +184,11 @@ def parse_csv(db, file):
                         lists[name]["courses"].append(category + course_ref)
                         # print(plan)
         lists = flatten_lists(lists)
+        lists = expand_wildcards(lists)
+        lists = add_space_to_course_codes(lists)
+        print(lists)
         # print(lists)
-    write_to_db(db, plan, lists, program_name, year)
+    # write_to_db(db, plan, lists, program_name, year)
 
 
 # ECE 
