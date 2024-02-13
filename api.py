@@ -91,16 +91,8 @@ def get_degree_reqs(degree_name: str, year: str, db: Session):
 
 
 def populate_courses_tags(degree_name: str, year: str, courses: list[CourseWithTagsSchema]):
-    # Make sure all the courses exist
-    # if (db.query(func.count(CourseModel.course_code))
-    #         .filter(CourseModel.course_code.in_([course.course_code for course in courses]))
-    #         .scalar() is None):
-    #     return None
-    print("Populating course tags", degree_name)
     for course in courses:
         populate_course_tags(degree_name=degree_name, year=year, course=course)
-
-    # print("Populated course tags", courses)
 
 
 @lru_cache()
