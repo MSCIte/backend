@@ -29,7 +29,7 @@ def add_courses_to_db(db: Session):
         )
 
         for i, row in enumerate(cur):
-            course_code = row[0] + " " + row[1]
+            course_code = row[0] + row[1]
             course_name = row[3]
             description = row[4]
             requirements_description = row[5]
@@ -37,6 +37,7 @@ def add_courses_to_db(db: Session):
                                  requirements_description=requirements_description)
             db.add(course)
             db.flush()
+            # print("course", course.course_code)
             if requirements_description:
                 if row[1][0] == '6' or row[1][0] == '7':
                     # ignoring grad degree courses for now
@@ -102,6 +103,6 @@ def add_degrees_to_db(db: Session):
         db.commit()
 
 
-db = SessionLocal()
-add_degrees_to_db(db)
+db = SessionLocal() 
+# add_degrees_to_db(db)
 add_courses_to_db(db)
