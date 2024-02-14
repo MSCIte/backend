@@ -20,14 +20,13 @@ def clean_courses(courses):
     return res
 
 
-@functools.cache
-def get_all_degrees():
+def get_all_degrees(db: Session = None) -> dict[str, str]:
     degree_map = {degree.discipline_name.lower().replace(' ', '_'): degree.discipline_name for degree in
-                  db.query(EngineeringDisciplineModel.discipline_name, ).distinct()}
+                  db.query(EngineeringDisciplineModel.discipline_name).distinct()}
     return degree_map
 
 
-def is_degree_exist_for_year(degree_name: str, year: str):
+def is_degree_exist_for_year(degree_name: str, year: str, db: Session):
     return db.query(
         db.query(func.count())
         .filter(
@@ -42,7 +41,7 @@ def is_degree_exist_for_year(degree_name: str, year: str):
 
 # add logic to select most recent year
 def get_degree_reqs(degree_name: str, year: str, db: Session) -> DegreeReqs:
-    degree_map = get_all_degrees()
+    degree_map = get_all_degrees(db=db)
     degree_formatted_name = degree_map[degree_name]
 
     if (
@@ -140,6 +139,7 @@ def tag_name_to_object(tag_name: str) -> TagSchema:
         "WKRPT": TagSchema(code='WKRPT', color='yellow', short_name='WKRPT', long_name='Work Report'),
         "WKTRM": TagSchema(code='WKTRM', color='yellow', short_name='WKTRM', long_name='Work Term'),
         "WTREF": TagSchema(code='WTREF', color='yellow', short_name='WTREF', long_name='Work Term Reflection'),
+        'SCE': TagSchema(code='SCE', color='yellow', short_name='SCE', long_name='Science Elective'),
     }
 
     return name_to_schema[tag_name]
@@ -149,7 +149,7 @@ def tag_name_to_object(tag_name: str) -> TagSchema:
 def get_degree_tags(degree_name: str, degree_year: str, db: Session) -> dict[str, set[str]]:
     # TODO: Implement logic that takes into account the case that 2015 and 2017 are published, but one requests for
     #  2016 (it should return 2015 but currently returns 2017)
-    if is_degree_exist_for_year(degree_name, degree_year):
+    if is_degree_exist_for_year(degree_name, degree_year, db):
         tags = (
             db.query(EngineeringDisciplineModel.discipline_name,
                      EngineeringDisciplineModel.course_codes,
@@ -300,7 +300,8 @@ def find_missing_requirements(course_list: list[str], requirements):
     return missing_requirements
 
 
-def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTakenIn, db: Session) -> list[OptionRequirement]:
+def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTakenIn, db: Session) -> list[
+    OptionRequirement]:
     data = get_options_reqs(option_id, year, db)
     missing_requirements: list[OptionRequirement] = find_missing_requirements(courses_taken, data["requirements"])
 

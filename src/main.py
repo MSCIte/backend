@@ -17,7 +17,7 @@ from db.admin import admin_views
 from db.database import SessionLocal
 from .validation import can_take_course
 from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_missing_reqs, get_option_missing_reqs, \
-    get_degree_tags, search_and_populate_courses
+    get_degree_tags, search_and_populate_courses, populate_courses_tags
 
 app = FastAPI()
 
@@ -69,7 +69,7 @@ def options_reqs(opt_id: str, year: str, db: Session = Depends(get_db)):
 
 
 # done
-@app.get('/option/{opt_id}/missing_reqs', response_model=list[OptionRequirement])
+@app.post('/option/{opt_id}/missing_reqs', response_model=list[OptionRequirement])
 def options_missing_reqs(opt_id: str, degree_missing_in: DegreeMissingIn, db: Session = Depends(get_db)):
     missing_reqs = get_option_missing_reqs(option_id=opt_id, courses_taken=degree_missing_in.course_codes_taken,
                                            year=degree_missing_in.year, db=db)
@@ -91,15 +91,15 @@ def degrees(db: Session = Depends(get_db)) -> list[str]:
 
 
 # done
-@app.get('/degree/{degree_id}/missing_reqs', response_model=DegreeMissingReqs)
-def degree_missing_reqs(degree_id: str, degree_missing_in: DegreeMissingIn, db: Session = Depends(get_db)):
+@app.post('/degree/{degree_id}/missing_reqs', response_model=DegreeMissingReqs)
+def degree_missing_reqs(degree_id: str, degree_missing_in: DegreeMissingIn = Body(...), db: Session = Depends(get_db)):
     missing_reqs = get_degree_missing_reqs(degree_id=degree_id, courses_taken=degree_missing_in.course_codes_taken,
                                            year=degree_missing_in.year, db=db)
     return missing_reqs
 
 
 # done
-@app.get('/courses/can-take/{course_code}', response_model=RequirementsResults)
+@app.post('/courses/can-take/{course_code}', response_model=RequirementsResults)
 def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Session = Depends(get_db)):
     can_take = can_take_course(db, courses_taken.course_codes_taken, course_code)
     res = RequirementsResults(result=can_take[0], message=can_take[1])
@@ -121,11 +121,18 @@ def search_courses(degree_name: Annotated[str, "The degree name, e.g. 'managemen
     return courses
 
 
-@app.get('/courses/tags')
+@app.get('/courses/tags', response_model=list[CourseWithTagsSchema])
 def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineering'"],
          degree_year: Annotated[str, "The year the plan was declared"],
          db: Session = Depends(get_db)):
-    return get_degree_tags(degree_name, degree_year, db)
+    courses_dict = get_degree_tags(degree_name, degree_year, db)
+
+    course_codes_list = list(courses_dict.keys())
+    print("course codes list", course_codes_list)
+
+    courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_codes_list)).all()
+    populate_courses_tags(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
+    return courses
 
 
 @app.get('/sample-path')
