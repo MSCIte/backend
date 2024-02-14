@@ -41,7 +41,7 @@ def is_degree_exist_for_year(degree_name: str, year: str):
 
 
 # add logic to select most recent year
-def get_degree_reqs(degree_name: str, year: str):
+def get_degree_reqs(degree_name: str, year: str, db: Session) -> DegreeReqs:
     degree_map = get_all_degrees()
     degree_formatted_name = degree_map[degree_name]
 
@@ -300,7 +300,7 @@ def find_missing_requirements(course_list: list[str], requirements):
     return missing_requirements
 
 
-def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTakenIn) -> list[OptionRequirement]:
+def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTakenIn, db: Session) -> list[OptionRequirement]:
     data = get_options_reqs(option_id, year, db)
     missing_requirements: list[OptionRequirement] = find_missing_requirements(courses_taken, data["requirements"])
 

@@ -71,15 +71,15 @@ def options_reqs(opt_id: str, year: str, db: Session = Depends(get_db)):
 # done
 @app.get('/option/{opt_id}/missing_reqs', response_model=list[OptionRequirement])
 def options_missing_reqs(opt_id: str, degree_missing_in: DegreeMissingIn, db: Session = Depends(get_db)):
-    missing_reqs = get_option_missing_reqs(opt_id, courses_taken=degree_missing_in.course_codes_taken,
-                                           year=degree_missing_in.year)
+    missing_reqs = get_option_missing_reqs(option_id=opt_id, courses_taken=degree_missing_in.course_codes_taken,
+                                           year=degree_missing_in.year, db=db)
     return missing_reqs
 
 
 # done
 @app.get('/degree/{degree_name}/reqs', response_model=DegreeReqs)
 def degree_reqs(degree_name: str, year: str, db: Session = Depends(get_db)):
-    reqs = get_degree_reqs(degree_name, year)
+    reqs = get_degree_reqs(degree_name, year, db)
     return reqs
 
 
@@ -123,8 +123,9 @@ def search_courses(degree_name: Annotated[str, "The degree name, e.g. 'managemen
 
 @app.get('/courses/tags')
 def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineering'"],
-         degree_year: Annotated[str, "The year the plan was declared"]):
-    return get_degree_tags(degree_name, degree_year)
+         degree_year: Annotated[str, "The year the plan was declared"],
+         db: Session = Depends(get_db)):
+    return get_degree_tags(degree_name, degree_year, db)
 
 
 @app.get('/sample-path')
