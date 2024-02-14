@@ -20,13 +20,14 @@ def clean_courses(courses):
     return res
 
 
-def get_all_degrees(db: Session):
+@functools.cache
+def get_all_degrees():
     degree_map = {degree.discipline_name.lower().replace(' ', '_'): degree.discipline_name for degree in
-                  db.query(EngineeringDisciplineModel.discipline_name).distinct()}
+                  db.query(EngineeringDisciplineModel.discipline_name, ).distinct()}
     return degree_map
 
 
-def is_degree_exist_for_year(degree_name: str, year: str, db: Session):
+def is_degree_exist_for_year(degree_name: str, year: str):
     return db.query(
         db.query(func.count())
         .filter(
@@ -40,8 +41,8 @@ def is_degree_exist_for_year(degree_name: str, year: str, db: Session):
 
 
 # add logic to select most recent year
-def get_degree_reqs(degree_name: str, year: str, db: Session):
-    degree_map = get_all_degrees(db)
+def get_degree_reqs(degree_name: str, year: str):
+    degree_map = get_all_degrees()
     degree_formatted_name = degree_map[degree_name]
 
     if (
@@ -90,21 +91,24 @@ def get_degree_reqs(degree_name: str, year: str, db: Session):
     return requirements
 
 
-def populate_courses_tags(degree_name: str, year: str, courses: list[CourseWithTagsSchema]):
+def populate_courses_tags(degree_name: str, year: str, courses: list[CourseWithTagsSchema], db: Session) -> None:
+    """
+    Mutates the courses list to include tags
+    """
     for course in courses:
-        populate_course_tags(degree_name=degree_name, year=year, course=course)
+        populate_course_tags(degree_name=degree_name, year=year, course=course, db=db)
 
 
 @lru_cache()
-def populate_course_tags(degree_name: str, year: str, course: CourseWithTagsSchema) -> None:
-    print("Attempting to populate tag for ", course.course_code)
-    tags = get_degree_tags(degree_name=degree_name, degree_year=year)
-    print("== degree tags", tags)
+def populate_course_tags(degree_name: str, year: str, course: CourseWithTagsSchema, db: Session) -> None:
+    """
+    Mutates the course object to include tags
+    """
+    tags = get_degree_tags(degree_name=degree_name, degree_year=year, db=db)
     # EngineeringDisciplines table has no space in course codes, other tables do
     course_code_no_space = course.course_code.replace(" ", "")
     course_tags = tags[course_code_no_space] if course_code_no_space in tags else ['ELEC']
     course.tags = [tag_name_to_object(tag_name) for tag_name in course_tags]
-    return
 
 
 def tag_name_to_object(tag_name: str) -> TagSchema:
@@ -142,10 +146,10 @@ def tag_name_to_object(tag_name: str) -> TagSchema:
 
 
 @functools.cache  # This should never change so we can indefinitely cache it
-def get_degree_tags(degree_name: str, degree_year: str):
+def get_degree_tags(degree_name: str, degree_year: str, db: Session) -> dict[str, set[str]]:
     # TODO: Implement logic that takes into account the case that 2015 and 2017 are published, but one requests for
     #  2016 (it should return 2015 but currently returns 2017)
-    if is_degree_exist_for_year(degree_name, degree_year, db):
+    if is_degree_exist_for_year(degree_name, degree_year):
         tags = (
             db.query(EngineeringDisciplineModel.discipline_name,
                      EngineeringDisciplineModel.course_codes,
@@ -184,15 +188,15 @@ def get_degree_tags(degree_name: str, degree_year: str):
     return tags_dict
 
 
-def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size: int, degree_name: str) -> list[
-    CourseWithTagsSchema]:
+def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size: int, degree_name: str, db: Session) -> \
+        (list)[CourseWithTagsSchema]:
     courses = (db.query(CourseModel).order_by(
         (CourseModel.course_code + " " + CourseModel.course_name).op("<->")(q).asc(),
     ).offset(offset).limit(page_size)).all()
 
-    print("pre-populate", courses)
-    populate_courses_tags(degree_name=degree_name, year=degree_year, courses=courses)
-    print("post-populate", courses)
+    # print("pre-populate", courses)
+    populate_courses_tags(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
+    # print("post-populate", courses)
     return courses
 
 
@@ -239,7 +243,7 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                 for course_code in course_codes:
                     temp_dict[course_code] = 0
 
-                for course_taken in courses_taken.course_codes_taken:
+                for course_taken in courses_taken:
                     if course_taken in temp_dict:
                         count += 1
 
@@ -281,10 +285,10 @@ def get_options_reqs(option_id: str, year: str, db: Session) -> OptionsSchema:
     return res
 
 
-def find_missing_requirements(course_list, requirements):
+def find_missing_requirements(course_list: list[str], requirements):
     missing_requirements = []
     for requirement in requirements:
-        courses_met = set(requirement.courses).intersection(course_list.course_codes_taken)
+        courses_met = set(requirement.courses).intersection(course_list)
         if len(courses_met) < requirement.number_of_courses:
             missing_courses = set(requirement.courses) - courses_met
             missing_requirement = {
