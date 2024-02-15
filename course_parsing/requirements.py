@@ -161,7 +161,7 @@ def load_prereqs(prereqs, course_code=""):
             number = new_number[0]
         else:
             number = ""
-        course = code + " " + number
+        course = code + number
         new_courses.append(course)
 
     # Loop backwards to replace each course with a respective letter
@@ -512,13 +512,13 @@ def fix_antireqs(antireqs):
     code = ""
 
     for i in range(len(antireqs)):
-        antireq = antireqs[i]
+        antireq = antireqs[i].replace(" ", "")
         code_num = antireq.split()
 
         if len(code_num) == 2:
             code = code_num[0]
         else:
-            antireq = code + " " + antireq
+            antireq = code + antireq
 
         antireqs[i] = antireq
 

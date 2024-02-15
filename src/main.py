@@ -1,20 +1,25 @@
 from typing import Annotated
 import requests
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
-from db.models import CourseModel
+from db.models import CourseModel, EngineeringDisciplineModel
 from db.schema import CourseSchema, CourseWithTagsSchema, OptionsSchema, OptionRequirement, DegreeMissingReqs, \
-    DegreeReqs
+    DegreeReqs, DegreeMissingIn
+from collections import defaultdict
 from db.schema import CoursesTakenIn, RequirementsResults
 from db.database import SessionLocal
 from sqladmin import Admin
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
+import git
+import json
 
 from db import engine
 from db.admin import admin_views
 from db.database import SessionLocal
 from .validation import can_take_course
-from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_missing_reqs, get_option_missing_reqs
+from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_missing_reqs, get_option_missing_reqs, \
+    get_degree_tags, search_and_populate_courses, populate_courses_tags
 
 app = FastAPI()
 
@@ -66,9 +71,10 @@ def options_reqs(opt_id: str, year: str, db: Session = Depends(get_db)):
 
 
 # done
-@app.get('/option/{opt_id}/missing_reqs', response_model=list[OptionRequirement])
-def options_missing_reqs(opt_id: str, courses_taken: CoursesTakenIn, year: str, db: Session = Depends(get_db)):
-    missing_reqs = get_option_missing_reqs(opt_id, year, courses_taken)
+@app.post('/option/{opt_id}/missing_reqs', response_model=list[OptionRequirement])
+def options_missing_reqs(opt_id: str, degree_missing_in: DegreeMissingIn, db: Session = Depends(get_db)):
+    missing_reqs = get_option_missing_reqs(option_id=opt_id, courses_taken=degree_missing_in.course_codes_taken,
+                                           year=degree_missing_in.year, db=db)
     return missing_reqs
 
 
@@ -82,19 +88,20 @@ def degree_reqs(degree_name: str, year: str, db: Session = Depends(get_db)):
 # done
 @app.get('/degree')
 def degrees(db: Session = Depends(get_db)) -> list[str]:
-    degrees = get_all_degrees(db).keys()
-    return degrees
+    degree_names = get_all_degrees(db).keys()
+    return degree_names
 
 
 # done
-@app.get('/degree/{degree_id}/missing_reqs', response_model=DegreeMissingReqs)
-def degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year: str, db: Session = Depends(get_db)):
-    missing_reqs = get_degree_missing_reqs(degree_id, courses_taken, year, db)
+@app.post('/degree/{degree_id}/missing_reqs', response_model=DegreeMissingReqs)
+def degree_missing_reqs(degree_id: str, degree_missing_in: DegreeMissingIn = Body(...), db: Session = Depends(get_db)):
+    missing_reqs = get_degree_missing_reqs(degree_id=degree_id, courses_taken=degree_missing_in.course_codes_taken,
+                                           year=degree_missing_in.year, db=db)
     return missing_reqs
 
 
 # done
-@app.get('/courses/can-take/{course_code}', response_model=RequirementsResults)
+@app.post('/courses/can-take/{course_code}', response_model=RequirementsResults)
 def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Session = Depends(get_db)):
     can_take = can_take_course(db, courses_taken.course_codes_taken, course_code)
     res = RequirementsResults(result=can_take[0], message=can_take[1])
@@ -103,23 +110,30 @@ def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Sessio
 
 # done
 @app.get('/courses/search', response_model=list[CourseWithTagsSchema])
-def search_courses(q: str | None = None, offset: Annotated[int | None, "bruh"] = 0, db: Session = Depends(get_db)):
-    # https://stackoverflow.com/a/71147604
-    def has_numbers(input_string: str) -> bool:
-        return any(char.isdigit() for char in input_string)
+def search_courses(degree_name: Annotated[str, "The degree name, e.g. 'management_engineering'"],
+                   degree_year: Annotated[int, "The year the plan was declared"],
+                   q: str | None = None,
+                   offset: Annotated[int | None, Query(title="Number of courses to offset the results from", ge=0)] = 0,
+                   page_size: Annotated[int | None, Query(title="Number of results returned", gt=0, le=100)] = 20,
+                   db: Session = Depends(get_db)
+                   ):
+    courses = search_and_populate_courses(q=q, offset=offset, page_size=page_size, degree_name=degree_name,
+                                          degree_year=degree_year, db=db)
 
-    # if has_numbers(q):
-    # Searching for specific course code
-    courses = db.query(CourseModel).order_by(
-        (CourseModel.course_code + " " + CourseModel.course_name).op("<->")(q).asc(),
-    ).offset(offset).limit(100).all()
-    # else:
-    #     # Searching by course name only
-    #     # Use <-> for performance
-    #     courses = db.query(CourseModel).order_by(
-    #         CourseModel.course_name.op("<->")(q).asc()
-    #     ).offset(offset).limit(100).all()
+    return courses
 
+
+@app.get('/courses/tags', response_model=list[CourseWithTagsSchema])
+def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineering'"],
+         degree_year: Annotated[str, "The year the plan was declared"],
+         db: Session = Depends(get_db)):
+    courses_dict = get_degree_tags(degree_name, degree_year, db)
+
+    course_codes_list = list(courses_dict.keys())
+    print("course codes list", course_codes_list)
+
+    courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_codes_list)).all()
+    populate_courses_tags(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
     return courses
 
 
@@ -128,3 +142,20 @@ def sample_path():
     return {
         "lol": "rooined"
     }
+
+
+# Devops things
+
+@app.post('/update_server')
+def webhook():
+    repo = git.Repo('~/backend')
+    origin = repo.remotes.origin
+
+    origin.pull()
+
+    return "Updated Python Backend"
+
+
+@app.get('/version')
+def version():
+    return '0.2.7'
