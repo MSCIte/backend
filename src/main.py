@@ -25,6 +25,7 @@ app = FastAPI()
 
 origins = [
     # Prod and deploy previews
+    "https://mscite.netlify.app",
     "https://*mscite.netlify.app",
     # Local dev
     "http://localhost",
@@ -152,14 +153,14 @@ def sample_path():
 
 # Devops things
 
-@app.post('/update_server')
-def webhook():
-    repo = git.Repo('~/backend')
-    origin = repo.remotes.origin
-
-    origin.pull()
-
-    return "Updated Python Backend"
+# @app.post('/update_server')
+# def webhook():
+#     repo = git.Repo('~/backend')
+#     origin = repo.remotes.origin
+#
+#     origin.pull()
+#
+#     return "Updated Python Backend"
 
 
 @app.get("/healthcheck")
