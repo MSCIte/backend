@@ -32,7 +32,7 @@ numpy==1.26.3
 openapi-client @ git+https://github.com/uwopt/waterloo-python-api.git@0662d9308e021011f488d52b72f6b66982ecd3ae
 packaging==23.2
 preshed==3.0.9
-psycopg2==2.9.9
+psycopg2-binary==2.9.9
 pydantic==2.5.3
 pydantic_core==2.14.6
 pyhumps==3.8.0
