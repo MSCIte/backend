@@ -83,14 +83,6 @@ class CoursesTakenIn(CamelModel):
         from_attributes = True
 
 
-class DegreeMissingIn(CamelModel):
-    course_codes_taken: list[str]
-    year: str
-
-    class Config:
-        from_attributes = True
-
-
 class RequirementsResults(CamelModel):
     result: bool
     message: str
