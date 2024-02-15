@@ -23,7 +23,13 @@ from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_m
 
 app = FastAPI()
 
-origins = ["*"]
+origins = [
+    # Prod and deploy previews
+    "https://*mscite.netlify.app",
+    # Local dev
+    "http://localhost",
+    "http://localhost:5173",
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -156,6 +162,6 @@ def webhook():
     return "Updated Python Backend"
 
 
-@app.get('/version')
-def version():
-    return '0.2.7'
+@app.get("/healthcheck")
+def read_root():
+    return {"status": "ok"}
