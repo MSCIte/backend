@@ -11,6 +11,8 @@ from db.database import SessionLocal
 from sqladmin import Admin
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
+import git
+import json
 
 from db import engine
 from db.admin import admin_views
@@ -140,3 +142,20 @@ def sample_path():
     return {
         "lol": "rooined"
     }
+
+
+# Devops things
+
+@app.post('/update_server')
+def webhook():
+    repo = git.Repo('~/backend')
+    origin = repo.remotes.origin
+
+    origin.pull()
+
+    return "Updated Python Backend"
+
+
+@app.get('/version')
+def version():
+    return '0.2.7'
