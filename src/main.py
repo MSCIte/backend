@@ -30,9 +30,6 @@ origins = [
     "http://localhost:5173",
 ]
 
-netlify_preview_pattern = r"https://(deploy-preview-\d+--|main--)?mscite\.netlify\.app/.*"
-origins = origins + [netlify_preview_pattern]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

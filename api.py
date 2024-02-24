@@ -3,7 +3,7 @@ from collections import defaultdict
 from functools import lru_cache
 
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, func
+from sqlalchemy import and_, case, func, or_, text
 from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel
 from db.database import SessionLocal
 from db.schema import OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, AdditionalReqCount, \
@@ -193,6 +193,23 @@ def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size
     courses = (db.query(CourseModel).order_by(
         (CourseModel.course_code + " " + CourseModel.course_name).op("<->")(q).asc(),
     ).offset(offset).limit(page_size)).all()
+    # q = q.replace(" ", "")
+    # courses = (
+    # db.query(CourseModel)
+    # .filter(
+    #     or_(
+    #         CourseModel.course_name.ilike(f'%{q}%'),
+    #         CourseModel.course_code.ilike(f'%{q}%'),
+    #         text("similarity(course_name || ' ' || course_code, :query) > 0.15").params(query=q)
+    #     )
+    # )
+    # .order_by(
+    #     CourseModel.course_name,
+    #     CourseModel.course_code
+    # )
+    # .offset(offset)
+    # .limit(page_size)
+    # ).all()
 
     # print("pre-populate", courses)
     populate_courses_tags(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
