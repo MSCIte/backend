@@ -22,22 +22,6 @@ from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_m
 
 app = FastAPI()
 
-
-# def validate_origin(origin: str) -> bool:
-#     netlify_preview_pattern = re.compile(r"https://(deploy-preview-\d+--|main--)?mscite\.netlify\.app/.*")
-#     return bool(netlify_preview_pattern.match(origin))
-
-# def get_allowed_origins():
-#     origins = [
-#         # Prod and deploy previews
-#         "https://mscite.netlify.app",
-#         "https://*mscite.netlify.app",
-#         # Local dev
-#         "http://localhost",
-#         "http://localhost:5173",
-#     ]
-#     return origins
-
 origins = [
     # Prod and deploy previews
     "https://mscite.netlify.app",
@@ -46,19 +30,6 @@ origins = [
     "http://localhost",
     "http://localhost:5173",
 ]
-
-# async def get_origin_validation_exception(request: Request, origin: str = Depends(get_allowed_origins)):
-#     client_origin = request.headers.get("origin")
-#     if not any(validate_origin(o) for o in [client_origin]):
-#         raise HTTPException(status_code=403, detail="Invalid origin")
-#     return origin
-
-
-
-netlify_preview_pattern = r"https://(deploy-preview-\d+--|main--)?mscite\.netlify\.app/.*"
-# origins += [netlify_preview_pattern]
-
-print("HELLO", origins)
 
 app.add_middleware(
     CORSMiddleware,
