@@ -249,7 +249,15 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
             .all()
         )
 
-    missing_courses = DegreeMissingReqs(mandatory_courses=[], additional_reqs={})
+    missing_courses = DegreeMissingReqs(mandatory_courses=[], number_of_mandatory_courses=0, additional_reqs={})
+
+    mandatory_course_count = 0
+    for req in reqs:
+        if re.match(r'^\d[A-Z]$', req.term):
+            mandatory_course_count += 1
+
+    missing_courses.number_of_mandatory_courses = mandatory_course_count
+
 
     for req in reqs:
         if req.term != "MLSTN" and req.term != "PDENG" and req.term != "WKRPT" and req.term != "PD":
