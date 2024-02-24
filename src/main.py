@@ -1,7 +1,6 @@
-import re
 from typing import Annotated
 import requests
-from fastapi import FastAPI, Depends, HTTPException, Query, Body, Request
+from fastapi import FastAPI, Depends, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from db.models import CourseModel, EngineeringDisciplineModel
 from db.schema import CourseSchema, CourseWithTagsSchema, OptionsSchema, OptionRequirement, DegreeMissingReqs, \
@@ -25,7 +24,7 @@ app = FastAPI()
 origins = [
     # Prod and deploy previews
     "https://mscite.netlify.app",
-    "https://*--mscite.netlify.app/",
+    "https://*mscite.netlify.app",
     # Local dev
     "http://localhost",
     "http://localhost:5173",
