@@ -10,9 +10,7 @@ from db.schema import CoursesTakenIn, RequirementsResults
 from db.database import SessionLocal
 from sqladmin import Admin
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
-import git
-import json
+
 
 from db import engine
 from db.admin import admin_views
@@ -31,6 +29,9 @@ origins = [
     "http://localhost",
     "http://localhost:5173",
 ]
+
+netlify_preview_pattern = r"https://(deploy-preview-\d+--|main--)?mscite\.netlify\.app/.*"
+origins = origins + [netlify_preview_pattern]
 
 app.add_middleware(
     CORSMiddleware,
