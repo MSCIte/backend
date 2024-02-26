@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, case, func, or_, text
 from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel
 from db.database import SessionLocal
-from db.schema import MissingList, MissingReqs, OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, AdditionalReqCount, \
+from db.schema import MissingList, MissingReqs, OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, \
+    AdditionalReqCount, \
     DegreeReqs, DegreeRequirement, CourseWithTagsSchema, TagSchema
 import re
 
@@ -258,7 +259,6 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
 
     missing_courses.number_of_mandatory_courses = mandatory_course_count
 
-
     for req in reqs:
         if req.term != "MLSTN" and req.term != "PDENG" and req.term != "WKRPT" and req.term != "PD":
             if "," in req.course_codes:
@@ -273,7 +273,6 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                         if re.match(r'^\d[A-Z]$', req.term):
                             course_codes.remove(course_taken)
                         count += 1
-                    
 
                 if re.match(r'^\d[A-Z]$', req.term):
                     course_codes = ", ".join(course_codes)
@@ -298,21 +297,25 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
 
 
 def get_options_reqs(option_id: str, year: str, db: Session) -> OptionsSchema:
-    rows = [{"courses": row.course_codes.split(","), "number_of_courses": row.number_of_courses} for row in
-            db.query(OptionsModel)
-            .filter(and_(OptionsModel.option_name == option_id, OptionsModel.year == year)).all()]
+    rows = [{"courses": row.course_codes.split(","), "number_of_courses": row.number_of_courses, "name": row.name} for
+            row in
+            db.query(OptionsModel).filter(and_(OptionsModel.option_name == option_id, OptionsModel.year == year)).all()]
     res: OptionsSchema = {
         "option_name": str(option_id),  # Convert option_id to str if needed
         "requirements": [],
     }
 
+    print('== rows', rows)
+
     for row in rows:
         courses = clean_courses(row["courses"])
-        course_map = {"courses": courses, "number_of_courses": row["number_of_courses"]}
+        course_map = {"courses": courses, "number_of_courses": row["number_of_courses"], "name": row['name']}
         res["requirements"].append(OptionRequirement(**course_map))
 
+    print("==wtf is this", res)
+
     return res
-    
+
 
 def find_missing_requirements(course_list: list[str], requirements):
     missing_requirements = MissingReqs(lists=[])
@@ -329,7 +332,7 @@ def find_missing_requirements(course_list: list[str], requirements):
 
         # Create the MissingList instance for the current requirement
         missing_requirement = MissingList(
-            list_name="Option",
+            list_name=requirement.name,
             courses=courses_dict,
             totalCourseToComplete=total_courses_to_complete
         )

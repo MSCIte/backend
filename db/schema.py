@@ -28,7 +28,7 @@ class ColorsEnum(str, Enum):
 
 class TagSchema(CamelModel):
     code: str  # e.g. "te", "mand"
-    color: ColorsEnum = ColorsEnum.red  # e.g. "red", "green"
+    color: ColorsEnum  # e.g. "red", "green"
     short_name: str  # e.g. "TE", "Mand."
     long_name: str  # e.g. "Technical Elective", "Mandatory"
 
@@ -44,6 +44,7 @@ class Config:
 class OptionRequirement(CamelModel):
     courses: list[str]
     number_of_courses: int
+    name: str
 
 
 class OptionsSchema(CamelModel):
@@ -130,7 +131,6 @@ class MissingList(CamelModel):
     courses: dict[str, bool]
     total_course_to_complete: int
 
+
 class MissingReqs(CamelModel):
     lists: list[MissingList]
-
-
