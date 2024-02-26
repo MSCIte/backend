@@ -191,30 +191,25 @@ def get_degree_tags(degree_name: str, degree_year: str, db: Session) -> dict[str
 
 def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size: int, degree_name: str, db: Session) -> \
         (list)[CourseWithTagsSchema]:
-    courses = (db.query(CourseModel).order_by(
-        (CourseModel.course_code + " " + CourseModel.course_name).op("<->")(q).asc(),
-    ).offset(offset).limit(page_size)).all()
-    # q = q.replace(" ", "")
-    # courses = (
-    # db.query(CourseModel)
-    # .filter(
-    #     or_(
-    #         CourseModel.course_name.ilike(f'%{q}%'),
-    #         CourseModel.course_code.ilike(f'%{q}%'),
-    #         text("similarity(course_name || ' ' || course_code, :query) > 0.15").params(query=q)
-    #     )
-    # )
-    # .order_by(
-    #     CourseModel.course_name,
-    #     CourseModel.course_code
-    # )
-    # .offset(offset)
-    # .limit(page_size)
-    # ).all()
+    q = q.replace(" ", "")
+    courses = (
+    db.query(CourseModel)
+    .filter(
+        or_(
+            CourseModel.course_name.ilike(f'%{q}%'),
+            CourseModel.course_code.ilike(f'%{q}%'),
+            text("similarity(course_name || ' ' || course_code, :query) > 0.15").params(query=q)
+        )
+    )
+    .order_by(
+        CourseModel.course_name,
+        CourseModel.course_code
+    )
+    .offset(offset)
+    .limit(page_size)
+    ).all()
 
-    # print("pre-populate", courses)
     populate_courses_tags(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
-    # print("post-populate", courses)
     return courses
 
 
