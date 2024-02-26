@@ -3,7 +3,7 @@ import requests
 from fastapi import FastAPI, Depends, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from db.models import CourseModel, EngineeringDisciplineModel
-from db.schema import CourseSchema, CourseWithTagsSchema, OptionsSchema, OptionRequirement, DegreeMissingReqs, \
+from db.schema import CourseSchema, CourseWithTagsSchema, MissingReqs, OptionsSchema, OptionRequirement, DegreeMissingReqs, \
     DegreeReqs, DegreeMissingIn
 from collections import defaultdict
 from db.schema import CoursesTakenIn, RequirementsResults
@@ -76,7 +76,7 @@ def options_reqs(opt_id: str, year: str, db: Session = Depends(get_db)):
 
 
 # done
-@app.post('/option/{opt_id}/missing_reqs', response_model=list[OptionRequirement])
+@app.post('/option/{opt_id}/missing_reqs', response_model=MissingReqs)
 def options_missing_reqs(opt_id: str, degree_missing_in: DegreeMissingIn, db: Session = Depends(get_db)):
     missing_reqs = get_option_missing_reqs(option_id=opt_id, courses_taken=degree_missing_in.course_codes_taken,
                                            year=degree_missing_in.year, db=db)
