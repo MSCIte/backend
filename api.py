@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, case, func, or_, text
 from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel
 from db.database import SessionLocal
-from db.schema import OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, AdditionalReqCount, \
+from db.schema import MissingList, MissingReqs, OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, AdditionalReqCount, \
     DegreeReqs, DegreeRequirement, CourseWithTagsSchema, TagSchema
 import re
 
@@ -270,10 +270,14 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
 
                 for course_taken in courses_taken:
                     if course_taken in temp_dict:
+                        if re.match(r'^\d[A-Z]$', req.term):
+                            course_codes.remove(course_taken)
                         count += 1
+                    
 
                 if re.match(r'^\d[A-Z]$', req.term):
-                    missing_courses.mandatory_courses.append("(" + req.course_codes + ")")
+                    course_codes = ", ".join(course_codes)
+                    missing_courses.mandatory_courses.append("(" + course_codes + ")")
                 else:
                     if req.term not in missing_courses.additional_reqs:
                         missing_courses.additional_reqs[req.term] = AdditionalReqCount(completed=str(count),
@@ -308,27 +312,38 @@ def get_options_reqs(option_id: str, year: str, db: Session) -> OptionsSchema:
         res["requirements"].append(OptionRequirement(**course_map))
 
     return res
-
+    
 
 def find_missing_requirements(course_list: list[str], requirements):
-    missing_requirements = []
+    missing_requirements = MissingReqs(lists=[])
+
     for requirement in requirements:
-        courses_met = set(requirement.courses).intersection(course_list)
-        if len(courses_met) < requirement.number_of_courses:
-            missing_courses = set(requirement.courses) - courses_met
-            missing_requirement = {
-                "courses": list(missing_courses),
-                "numberOfCourses": requirement.number_of_courses - len(courses_met)
-            }
-            missing_requirements.append(missing_requirement)
+        courses_dict = {}
+
+        # For each course in requirement that is in course_list, add to dictionary and assign value of True else False
+        for course in requirement.courses:
+            courses_dict[course] = course in course_list
+
+        # Calculate the total number of courses needed to complete the requirements
+        total_courses_to_complete = requirement.number_of_courses
+
+        # Create the MissingList instance for the current requirement
+        missing_requirement = MissingList(
+            list_name="Option",
+            courses=courses_dict,
+            totalCourseToComplete=total_courses_to_complete
+        )
+
+        missing_requirements.lists.append(missing_requirement)
 
     return missing_requirements
 
 
-def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTakenIn, db: Session) -> list[
-    OptionRequirement]:
+def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTakenIn, db: Session) -> MissingReqs:
+    # get the requirements for the option
     data = get_options_reqs(option_id, year, db)
-    missing_requirements: list[OptionRequirement] = find_missing_requirements(courses_taken, data["requirements"])
+    # find the missing requirements
+    missing_requirements: MissingReqs = find_missing_requirements(courses_taken, data["requirements"])
 
     if not missing_requirements:
         print("YAY all requirements met")

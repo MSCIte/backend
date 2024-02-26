@@ -104,6 +104,11 @@ class AdditionalReqCount(CamelModel):
     total: str
 
 
+# class DegreeMissingReqs(CamelModel):
+#     mandatory_courses: list[str]
+#     number_of_mandatory_courses: int
+#     additional_reqs: dict[str, AdditionalReqCount]
+
 class DegreeMissingReqs(CamelModel):
     mandatory_courses: list[str]
     number_of_mandatory_courses: int
@@ -118,3 +123,14 @@ class DegreeRequirement(CamelModel):
 class DegreeReqs(CamelModel):
     mandatory_courses: list[str]
     additional_reqs: dict[str, DegreeRequirement]
+
+
+class MissingList(CamelModel):
+    list_name: str
+    courses: dict[str, bool]
+    total_course_to_complete: int
+
+class MissingReqs(CamelModel):
+    lists: list[MissingList]
+
+
