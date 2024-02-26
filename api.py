@@ -198,7 +198,7 @@ def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size
         or_(
             CourseModel.course_name.ilike(f'%{q}%'),
             CourseModel.course_code.ilike(f'%{q}%'),
-            text("similarity(course_name || ' ' || course_code, :query) > 0.15").params(query=q)
+            text("similarity(course_name || course_code, :query) > 0.19").params(query=q)
         )
     )
     .order_by(
