@@ -17,7 +17,7 @@ from db.admin import admin_views
 from db.database import SessionLocal
 from .validation import can_take_course
 from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_missing_reqs, get_option_missing_reqs, \
-    get_degree_tags, search_and_populate_courses, populate_courses_tags
+    get_degree_tags, search_and_populate_courses, populate_courses_tags, get_option_tags, merge_dicts
 
 app = FastAPI()
 
@@ -131,14 +131,20 @@ def search_courses(degree_name: Annotated[str, "The degree name, e.g. 'managemen
 @app.get('/courses/tags', response_model=list[CourseWithTagsSchema])
 def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineering'"],
          degree_year: Annotated[str, "The year the plan was declared"],
+         option_name: Annotated[str, "The option name, e.g. 'management_engineering'"] = "",
+         option_year: Annotated[str, "The year the plan was declared"] = "",
          db: Session = Depends(get_db)):
     courses_dict = get_degree_tags(degree_name, degree_year, db)
+    if option_name and option_year:
+        print("courses dict: ", courses_dict)
+        print("option dict: ", get_option_tags(option_name, option_year, db))
+        courses_dict = merge_dicts(courses_dict, get_option_tags(option_name, option_year, db))
 
     course_codes_list = list(courses_dict.keys())
-    print("course codes list", course_codes_list)
 
     courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_codes_list)).all()
-    populate_courses_tags(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
+    
+    populate_courses_tags(courses=courses, courses_tag_dict=courses_dict)
     return courses
 
 

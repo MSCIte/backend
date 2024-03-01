@@ -35,6 +35,7 @@ class OptionsModel(Base):
     name = Column(String, unique=False)
     link = Column(String, unique=False)
     year = Column(String, unique=False)
+    name = Column(String, unique=False)
 
 
 class EngineeringDisciplineModel(Base):
