@@ -279,8 +279,19 @@ def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size
     .limit(page_size)
     ).all()
 
-    populate_courses_tags(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
+    populate_courses_tags_search(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
     return courses
+
+def populate_courses_tags_search(degree_name: str, year: str, courses: list[CourseWithTagsSchema], db: Session) -> None:
+    """
+    Mutates the course object to include tags
+    """
+    for course in courses:
+        tags = get_degree_tags(degree_name=degree_name, degree_year=year, db=db)
+        # EngineeringDisciplines table has no space in course codes, other tables do
+        course_code_no_space = course.course_code.replace(" ", "")
+        course_tags = tags[course_code_no_space] if course_code_no_space in tags else ['ELEC']
+        course.tags = [tag_name_to_object(tag_name) for tag_name in course_tags]
 
 
 def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year: str, db: Session) -> DegreeMissingReqs:

@@ -69,3 +69,20 @@ class AntirequisiteModel(Base):
     course_id = Column('course_id', Integer, ForeignKey('courses.id'))
     courses = Column('courses', String, unique=False, index=True)
     extra_info = Column('extra_info', String, unique=False)
+
+class SamplePathModel(Base):
+    __allow_unmapped__ = True
+    __tablename__ = 'sample_path'
+
+    id = Column(Integer, primary_key=True)
+    engineering_discipline = Column(String, unique=False, index=True)
+    course_order = Column(Integer, unique=False, index=True)
+    course_code = Column(String, ForeignKey('courses.course_code'))
+
+    course = relationship('CourseModel', back_populates='sample_paths')
+    
+
+    def __str__(self):
+        return self.course_code
+
+CourseModel.sample_paths = relationship('SamplePathModel', order_by=SamplePathModel.course_order, back_populates='course')

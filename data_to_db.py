@@ -103,6 +103,7 @@ def add_degrees_to_db(db: Session):
         db.commit()
 
 
+
 db = SessionLocal() 
 # add_degrees_to_db(db)
-add_courses_to_db(db)
+# add_courses_to_db(db)
