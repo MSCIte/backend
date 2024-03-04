@@ -272,8 +272,9 @@ def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size
         )
     )
     .order_by(
-        CourseModel.course_name,
-        CourseModel.course_code
+        CourseModel.course_code,
+        CourseModel.course_name
+        
     )
     .offset(offset)
     .limit(page_size)
