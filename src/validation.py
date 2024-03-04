@@ -70,7 +70,7 @@ def can_take_course(db: Session, courses_taken: list[str], course: str):
         if eval(prereq_logic):
             return True, ""
         else:
-            return False, "Prerequisite or corequisite not met."
+            return False, "Prereq or coreq not met."
     except Exception as e:
         # EMAIL(course, self.prereq_courses, self.prereq_logic, list_of_courses_taken, current_term_courses, e)
         # Error Log
@@ -90,6 +90,6 @@ def can_take_course(db: Session, courses_taken: list[str], course: str):
         #                     settings.EMAIL_HOST_USER,
         #                     [settings.EMAIL_HOST_USER])
         # msg.send()
-        return
+        return False, "An error occurred. An email has been sent to the developers."
 
 # print(can_take_course(db, ["LOL 1001", "CS 135"], "ACTSC127"))
