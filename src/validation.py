@@ -39,13 +39,24 @@ def level_can_take(logic, course, taken_courses, i):
 
 def can_take_course(db: Session, courses_taken: list[str], course: str):
     course_obj = db.query(CourseModel).where(CourseModel.course_code == course).first()
+
+    if not course_obj:
+        return False, "Course does not exist."
+
+
     prereqs = db.query(PrerequisiteModel).where(PrerequisiteModel.course_id == course_obj.id).first()
     antireqs = db.query(AntirequisiteModel).where(AntirequisiteModel.course_id == course_obj.id).first()
+
     if antireqs:
         antireq_courses = json.loads(antireqs.courses)
         for antireq in antireq_courses:
             if any((c in antireq) for c in courses_taken):
                 return False, "The course has an antirequisite."
+
+    # If the course doesn't exist, assume it's just because it wasn't slotted into the preqreqs table,
+    # and therefore there are no preqreqs for this course.
+    if not prereqs:
+        return True, ""
 
     prereq_logic = prereqs.logic
     prereq_courses = json.loads(prereqs.courses)
