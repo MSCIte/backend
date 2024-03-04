@@ -39,13 +39,24 @@ def level_can_take(logic, course, taken_courses, i):
 
 def can_take_course(db: Session, courses_taken: list[str], course: str):
     course_obj = db.query(CourseModel).where(CourseModel.course_code == course).first()
+
+    if not course_obj:
+        return False, "Course does not exist."
+
+
     prereqs = db.query(PrerequisiteModel).where(PrerequisiteModel.course_id == course_obj.id).first()
     antireqs = db.query(AntirequisiteModel).where(AntirequisiteModel.course_id == course_obj.id).first()
+
     if antireqs:
         antireq_courses = json.loads(antireqs.courses)
         for antireq in antireq_courses:
             if any((c in antireq) for c in courses_taken):
                 return False, "The course has an antirequisite."
+
+    # If the course doesn't exist, assume it's just because it wasn't slotted into the preqreqs table,
+    # and therefore there are no preqreqs for this course.
+    if not prereqs:
+        return True, ""
 
     prereq_logic = prereqs.logic
     prereq_courses = json.loads(prereqs.courses)
@@ -59,7 +70,7 @@ def can_take_course(db: Session, courses_taken: list[str], course: str):
         if eval(prereq_logic):
             return True, ""
         else:
-            return False, "Prerequisite or corequisite not met."
+            return False, "Prereq or coreq not met."
     except Exception as e:
         # EMAIL(course, self.prereq_courses, self.prereq_logic, list_of_courses_taken, current_term_courses, e)
         # Error Log
@@ -79,6 +90,6 @@ def can_take_course(db: Session, courses_taken: list[str], course: str):
         #                     settings.EMAIL_HOST_USER,
         #                     [settings.EMAIL_HOST_USER])
         # msg.send()
-        return
+        return False, "An error occurred. An email has been sent to the developers."
 
 # print(can_take_course(db, ["LOL 1001", "CS 135"], "ACTSC127"))
