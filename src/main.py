@@ -3,10 +3,10 @@ import requests
 from fastapi import FastAPI, Depends, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from db.models import CourseModel, EngineeringDisciplineModel
-from db.schema import CourseSchema, CourseWithTagsSchema, MissingReqs, OptionsSchema, OptionRequirement, DegreeMissingReqs, \
-    DegreeReqs, DegreeMissingIn
+from db.schema import CourseWithTagsSchema, MissingReqs, OptionsSchema, CoursesTakenIn, OptionRequirement, DegreeMissingReqs, \
+    DegreeReqs, DegreeMissingIn, RequirementsResult
 from collections import defaultdict
-from db.schema import CoursesTakenIn, RequirementsResults
+from db.schema import CanTakeCourseBatch, RequirementsResults
 from db.database import SessionLocal
 from sqladmin import Admin
 from sqlalchemy.orm import Session
@@ -105,8 +105,18 @@ def degree_missing_reqs(degree_id: str, degree_missing_in: DegreeMissingIn = Bod
     return missing_reqs
 
 
-# done
-@app.post('/courses/can-take/{course_code}', response_model=RequirementsResults)
+@app.post('/courses/can-take/batch', response_model=RequirementsResults)
+def courses_can_take_batch(course_codes_can_take: CanTakeCourseBatch, db: Session = Depends(get_db)):
+    res = RequirementsResults(results=[])
+    res_dict = []
+    for course_code in course_codes_can_take.can_take_course_codes:
+        can_take = can_take_course(db, course_code.course_codes_taken, course_code.course_code)
+        res_dict.append(RequirementsResult(result=can_take[0], message=can_take[1]))
+    
+    res.results = res_dict
+    return res
+
+@app.post('/courses/can-take/{course_code}', response_model=RequirementsResult)
 def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Session = Depends(get_db)):
     can_take = can_take_course(db, courses_taken.course_codes_taken, course_code)
     res = RequirementsResults(result=can_take[0], message=can_take[1])

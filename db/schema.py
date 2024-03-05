@@ -84,6 +84,21 @@ class CoursesTakenIn(CamelModel):
         from_attributes = True
 
 
+class CanTakeCourseQuery(CamelModel):
+    course_code: str
+    course_codes_taken: list[str]
+
+    class Config:
+        from_attributes = True
+
+
+class CanTakeCourseBatch(CamelModel):
+    can_take_course_codes: list[CanTakeCourseQuery]
+
+    class Config:
+        from_attributes = True
+
+
 class DegreeMissingIn(CamelModel):
     course_codes_taken: list[str]
     year: str
@@ -92,9 +107,16 @@ class DegreeMissingIn(CamelModel):
         from_attributes = True
 
 
-class RequirementsResults(CamelModel):
+class RequirementsResult(CamelModel):
     result: bool
     message: str
+
+    class Config:
+        from_attributes = True
+
+
+class RequirementsResults(CamelModel):
+    results: list[RequirementsResult]
 
     class Config:
         from_attributes = True
