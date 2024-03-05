@@ -298,7 +298,7 @@ def populate_courses_tags_search(degree_name: str, year: str, courses: list[Cour
         course.tags = [tag_name_to_object(tag_name) for tag_name in course_tags]
 
 
-def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year: str, db: Session) -> DegreeMissingReqs:
+def get_degree_missing_reqs(degree_id: str, courses_taken: list[str], year: str, db: Session) -> DegreeMissingReqs:
     if (
             db.query(
                 db.query(func.count())
