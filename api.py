@@ -347,11 +347,14 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                 course_codes = req.course_codes.split(", ")
                 count = 0
                 for course_code in course_codes:
+                    course_code = re.sub(r'[^a-zA-Z0-9]', '', course_code)
                     temp_dict[course_code] = 0
-                for course_taken in courses_taken:
+                
+                for i, course_taken in reversed(tuple(enumerate(courses_taken))):
                     if course_taken in temp_dict:
                         if re.match(r'^\d[A-Z]$', req.term):
                             course_codes.remove(course_taken)
+                        courses_taken.pop(i)
                         count += 1
 
                 if re.match(r'^\d[A-Z]$', req.term):
@@ -359,7 +362,7 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                     if count < req.number_of_courses:
                         missing_courses.mandatory_courses.append("(" + course_codes + ")")
                 else:
-                    if req.term not in missing_courses.additional_reqs:
+                    if req_long_name not in missing_courses.additional_reqs:
                         missing_courses.additional_reqs[req_long_name] = AdditionalReqCount(completed=str(count),
                                                                                        total=str(req.number_of_courses))
                     else:
