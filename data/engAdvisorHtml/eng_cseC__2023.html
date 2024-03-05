@@ -1,0 +1,702 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="css/advisor.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
+<script src="advisor.js"/></script>
+<script type="text/javascript">
+
+</script>
+</head>
+<body>
+<table class="outer" cellpadding="0" cellspacing="0">
+<tr>
+<td>
+<a name="top"></a>
+<table class="head" cellpadding="0" cellspacing="0">
+<tr>
+<td width="15">&nbsp;</td>
+<td width="500" valign="middle" style="text-align:left"><h1>Advisor </h1></td>
+<td rowspan="2">&nbsp;&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>
+<table class="head" cellpadding="0" cellspacing="0">
+<tr style="height:20px">
+<td class="navbar" id="user_info">
+</td>
+<td class="navbar" width="100" style="border-right:none">
+<div class="dropdown">
+<button onclick="toggleUserDropdown()" class="dropbtn" style="width:100%">k44jiang<img src="img/ExpandMore.svg" alt="V" height="12"></button>
+<div id="userDropdown" class="dropdown-content">
+<a href="AdvisorServlet?request=logout">
+logout</a>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>
+<table class="main">
+<tr>
+<td>
+<table class="content" width=884 cellpadding="0" cellspacing="0">
+<tr> <th>  </th> </tr>
+<tr> <td> <table style = "border-collapse:collapse;">
+<tr> <td>AE</td> <td>101</td> </tr>
+<tr> <td>AE</td> <td>491</td> </tr>
+<tr> <td>AFM</td> <td>131</td> </tr>
+<tr> <td>AFM</td> <td>333</td> </tr>
+<tr> <td>ANTH</td> <td>*</td> </tr>
+<tr> <td>APPLS</td> <td>*</td> </tr>
+<tr> <td>ARBUS</td> <td>101</td> </tr>
+<tr> <td>ARBUS</td> <td>301</td> </tr>
+<tr> <td>ARTS</td> <td>122</td> </tr>
+<tr> <td>ARTS</td> <td>450</td> </tr>
+<tr> <td>AVIA</td> <td>100</td> </tr>
+<tr> <td>BET</td> <td>100</td> </tr>
+<tr> <td>BET</td> <td>300</td> </tr>
+<tr> <td>BET</td> <td>320</td> </tr>
+<tr> <td>BET</td> <td>340</td> </tr>
+<tr> <td>BET</td> <td>350</td> </tr>
+<tr> <td>BET</td> <td>400</td> </tr>
+<tr> <td>BET</td> <td>411</td> </tr>
+<tr> <td>BET</td> <td>420</td> </tr>
+<tr> <td>BET</td> <td>430</td> </tr>
+<tr> <td>BET</td> <td>450</td> </tr>
+<tr> <td>BET</td> <td>460</td> </tr>
+<tr> <td>BET</td> <td>470</td> </tr>
+<tr> <td>BET</td> <td>580</td> </tr>
+<tr> <td>BLKST</td> <td>101</td> </tr>
+<tr> <td>BLKST</td> <td>102</td> </tr>
+<tr> <td>BLKST</td> <td>103</td> </tr>
+<tr> <td>BLKST</td> <td>201</td> </tr>
+<tr> <td>BLKST</td> <td>202</td> </tr>
+<tr> <td>BLKST</td> <td>203</td> </tr>
+<tr> <td>BLKST</td> <td>210</td> </tr>
+<tr> <td>BLKST</td> <td>224</td> </tr>
+<tr> <td>BLKST</td> <td>230</td> </tr>
+<tr> <td>BLKST</td> <td>240</td> </tr>
+<tr> <td>BLKST</td> <td>244</td> </tr>
+<tr> <td>BLKST</td> <td>302</td> </tr>
+<tr> <td>BLKST</td> <td>304</td> </tr>
+<tr> <td>BLKST</td> <td>309</td> </tr>
+<tr> <td>BLKST</td> <td>317</td> </tr>
+<tr> <td>BLKST</td> <td>330</td> </tr>
+<tr> <td>BLKST</td> <td>410</td> </tr>
+<tr> <td>BLKST</td> <td>421</td> </tr>
+<tr> <td>BME</td> <td>381</td> </tr>
+<tr> <td>BME</td> <td>530</td> </tr>
+<tr> <td>CDNST</td> <td>*</td> </tr>
+<tr> <td>CI</td> <td>100</td> </tr>
+<tr> <td>CI</td> <td>200</td> </tr>
+<tr> <td>CI</td> <td>250</td> </tr>
+<tr> <td>CI</td> <td>300</td> </tr>
+<tr> <td>CI</td> <td>329</td> </tr>
+<tr> <td>CIVE</td> <td>491</td> </tr>
+<tr> <td>CLAS</td> <td>*</td> </tr>
+<tr> <td>CMW</td> <td>363</td> </tr>
+<tr> <td>CMW</td> <td>364</td> </tr>
+<tr> <td>COGSCI</td> <td>300</td> </tr>
+<tr> <td>COMM</td> <td>400</td> </tr>
+<tr> <td>COMMST</td> <td>101</td> </tr>
+<tr> <td>COMMST</td> <td>112</td> </tr>
+<tr> <td>COMMST</td> <td>201</td> </tr>
+<tr> <td>COMMST</td> <td>210</td> </tr>
+<tr> <td>COMMST</td> <td>224</td> </tr>
+<tr> <td>COMMST</td> <td>226</td> </tr>
+<tr> <td>COMMST</td> <td>228</td> </tr>
+<tr> <td>COMMST</td> <td>335</td> </tr>
+<tr> <td>COMMST</td> <td>339</td> </tr>
+<tr> <td>COMMST</td> <td>399</td> </tr>
+<tr> <td>COMMST</td> <td>401</td> </tr>
+<tr> <td>COMMST</td> <td>402</td> </tr>
+<tr> <td>COMMST</td> <td>420</td> </tr>
+<tr> <td>COMMST</td> <td>430</td> </tr>
+<tr> <td>COMMST</td> <td>431</td> </tr>
+<tr> <td>COMMST</td> <td>432</td> </tr>
+<tr> <td>COMMST</td> <td>434</td> </tr>
+<tr> <td>COMMST</td> <td>435</td> </tr>
+<tr> <td>COMMST</td> <td>471</td> </tr>
+<tr> <td>COMMST</td> <td>475</td> </tr>
+<tr> <td>COMMST</td> <td>479</td> </tr>
+<tr> <td>CS</td> <td>492</td> </tr>
+<tr> <td>DUTCH</td> <td>271</td> </tr>
+<tr> <td>EASIA</td> <td>*</td> </tr>
+<tr> <td>ECON</td> <td>*</td> </tr>
+<tr> <td>ENBUS</td> <td>102</td> </tr>
+<tr> <td>ENBUS</td> <td>112</td> </tr>
+<tr> <td>ENBUS</td> <td>203</td> </tr>
+<tr> <td>ENBUS</td> <td>211</td> </tr>
+<tr> <td>ENBUS</td> <td>302</td> </tr>
+<tr> <td>ENBUS</td> <td>309</td> </tr>
+<tr> <td>ENBUS</td> <td>310</td> </tr>
+<tr> <td>ENBUS</td> <td>315</td> </tr>
+<tr> <td>ENBUS</td> <td>405</td> </tr>
+<tr> <td>ENBUS</td> <td>408</td> </tr>
+<tr> <td>ENBUS</td> <td>411</td> </tr>
+<tr> <td>ENGL</td> <td>*</td> </tr>
+<tr> <td>ENVE</td> <td>391</td> </tr>
+<tr> <td>ENVS</td> <td>105</td> </tr>
+<tr> <td>ENVS</td> <td>195</td> </tr>
+<tr> <td>ENVS</td> <td>201</td> </tr>
+<tr> <td>ENVS</td> <td>205</td> </tr>
+<tr> <td>ENVS</td> <td>210</td> </tr>
+<tr> <td>ENVS</td> <td>220</td> </tr>
+<tr> <td>ENVS</td> <td>310</td> </tr>
+<tr> <td>ENVS</td> <td>350</td> </tr>
+<tr> <td>ENVS</td> <td>401</td> </tr>
+<tr> <td>ERS</td> <td>100</td> </tr>
+<tr> <td>ERS</td> <td>215</td> </tr>
+<tr> <td>ERS</td> <td>222</td> </tr>
+<tr> <td>ERS</td> <td>225</td> </tr>
+<tr> <td>ERS</td> <td>253</td> </tr>
+<tr> <td>ERS</td> <td>288</td> </tr>
+<tr> <td>ERS</td> <td>294</td> </tr>
+<tr> <td>ERS</td> <td>315</td> </tr>
+<tr> <td>ERS</td> <td>320</td> </tr>
+<tr> <td>ERS</td> <td>328</td> </tr>
+<tr> <td>ERS</td> <td>361</td> </tr>
+<tr> <td>ERS</td> <td>365</td> </tr>
+<tr> <td>ERS</td> <td>370</td> </tr>
+<tr> <td>ERS</td> <td>372</td> </tr>
+<tr> <td>ERS</td> <td>404</td> </tr>
+<tr> <td>ERS</td> <td>406</td> </tr>
+<tr> <td>ERS</td> <td>454</td> </tr>
+<tr> <td>ERS</td> <td>460</td> </tr>
+<tr> <td>ERS</td> <td>462</td> </tr>
+<tr> <td>FINE</td> <td>101</td> </tr>
+<tr> <td>FINE</td> <td>102</td> </tr>
+<tr> <td>FINE</td> <td>112</td> </tr>
+<tr> <td>FINE</td> <td>209</td> </tr>
+<tr> <td>FINE</td> <td>210</td> </tr>
+<tr> <td>FINE</td> <td>212</td> </tr>
+<tr> <td>FINE</td> <td>213</td> </tr>
+<tr> <td>FINE</td> <td>214</td> </tr>
+<tr> <td>FINE</td> <td>215</td> </tr>
+<tr> <td>FINE</td> <td>216</td> </tr>
+<tr> <td>FINE</td> <td>217</td> </tr>
+<tr> <td>FINE</td> <td>241</td> </tr>
+<tr> <td>FINE</td> <td>242</td> </tr>
+<tr> <td>FINE</td> <td>244</td> </tr>
+<tr> <td>FINE</td> <td>245</td> </tr>
+<tr> <td>FINE</td> <td>252</td> </tr>
+<tr> <td>FINE</td> <td>256</td> </tr>
+<tr> <td>FINE</td> <td>257</td> </tr>
+<tr> <td>FINE</td> <td>258</td> </tr>
+<tr> <td>FINE</td> <td>259</td> </tr>
+<tr> <td>FINE</td> <td>262</td> </tr>
+<tr> <td>FINE</td> <td>275</td> </tr>
+<tr> <td>FINE</td> <td>281</td> </tr>
+<tr> <td>FINE</td> <td>282</td> </tr>
+<tr> <td>FINE</td> <td>319</td> </tr>
+<tr> <td>FINE</td> <td>338</td> </tr>
+<tr> <td>FINE</td> <td>341</td> </tr>
+<tr> <td>FINE</td> <td>342</td> </tr>
+<tr> <td>FINE</td> <td>362</td> </tr>
+<tr> <td>FINE</td> <td>364</td> </tr>
+<tr> <td>FINE</td> <td>368</td> </tr>
+<tr> <td>FINE</td> <td>377</td> </tr>
+<tr> <td>FR</td> <td>276</td> </tr>
+<tr> <td>FR</td> <td>291</td> </tr>
+<tr> <td>FR</td> <td>292</td> </tr>
+<tr> <td>FR</td> <td>296</td> </tr>
+<tr> <td>FR</td> <td>297</td> </tr>
+<tr> <td>FR</td> <td>332</td> </tr>
+<tr> <td>FR</td> <td>343</td> </tr>
+<tr> <td>FR</td> <td>354</td> </tr>
+<tr> <td>FR</td> <td>363</td> </tr>
+<tr> <td>FR</td> <td>365</td> </tr>
+<tr> <td>FR</td> <td>367</td> </tr>
+<tr> <td>FR</td> <td>373</td> </tr>
+<tr> <td>FR</td> <td>375</td> </tr>
+<tr> <td>FR</td> <td>410</td> </tr>
+<tr> <td>FR</td> <td>471</td> </tr>
+<tr> <td>FR</td> <td>473</td> </tr>
+<tr> <td>FR</td> <td>484</td> </tr>
+<tr> <td>FR</td> <td>485</td> </tr>
+<tr> <td>FR</td> <td>487</td> </tr>
+<tr> <td>GENE</td> <td>22C</td> </tr>
+<tr> <td>GENE</td> <td>315</td> </tr>
+<tr> <td>GENE</td> <td>415</td> </tr>
+<tr> <td>GEOE</td> <td>391</td> </tr>
+<tr> <td>GEOG</td> <td>101</td> </tr>
+<tr> <td>GEOG</td> <td>202</td> </tr>
+<tr> <td>GEOG</td> <td>203</td> </tr>
+<tr> <td>GEOG</td> <td>207</td> </tr>
+<tr> <td>GEOG</td> <td>215</td> </tr>
+<tr> <td>GEOG</td> <td>219</td> </tr>
+<tr> <td>GEOG</td> <td>222</td> </tr>
+<tr> <td>GEOG</td> <td>225</td> </tr>
+<tr> <td>GEOG</td> <td>233</td> </tr>
+<tr> <td>GEOG</td> <td>302</td> </tr>
+<tr> <td>GEOG</td> <td>306</td> </tr>
+<tr> <td>GEOG</td> <td>307</td> </tr>
+<tr> <td>GEOG</td> <td>314</td> </tr>
+<tr> <td>GEOG</td> <td>323</td> </tr>
+<tr> <td>GEOG</td> <td>325</td> </tr>
+<tr> <td>GEOG</td> <td>336</td> </tr>
+<tr> <td>GEOG</td> <td>349</td> </tr>
+<tr> <td>GEOG</td> <td>361</td> </tr>
+<tr> <td>GEOG</td> <td>368</td> </tr>
+<tr> <td>GEOG</td> <td>411</td> </tr>
+<tr> <td>GEOG</td> <td>423</td> </tr>
+<tr> <td>GEOG</td> <td>432</td> </tr>
+<tr> <td>GEOG</td> <td>460</td> </tr>
+<tr> <td>GEOG</td> <td>462</td> </tr>
+<tr> <td>GER</td> <td>100</td> </tr>
+<tr> <td>GER</td> <td>120</td> </tr>
+<tr> <td>GER</td> <td>180</td> </tr>
+<tr> <td>GER</td> <td>200</td> </tr>
+<tr> <td>GER</td> <td>230</td> </tr>
+<tr> <td>GER</td> <td>261</td> </tr>
+<tr> <td>GER</td> <td>262</td> </tr>
+<tr> <td>GER</td> <td>271</td> </tr>
+<tr> <td>GER</td> <td>272</td> </tr>
+<tr> <td>GER</td> <td>283</td> </tr>
+<tr> <td>GER</td> <td>286</td> </tr>
+<tr> <td>GER</td> <td>301</td> </tr>
+<tr> <td>GER</td> <td>330</td> </tr>
+<tr> <td>GER</td> <td>362</td> </tr>
+<tr> <td>GER</td> <td>363</td> </tr>
+<tr> <td>GER</td> <td>364</td> </tr>
+<tr> <td>GER</td> <td>383</td> </tr>
+<tr> <td>GER</td> <td>385</td> </tr>
+<tr> <td>GERON</td> <td>201</td> </tr>
+<tr> <td>GERON</td> <td>218</td> </tr>
+<tr> <td>GERON</td> <td>352</td> </tr>
+<tr> <td>GRK</td> <td>421</td> </tr>
+<tr> <td>GSJ</td> <td>*</td> </tr>
+<tr> <td>HIST</td> <td>*</td> </tr>
+<tr> <td>HLTH</td> <td>101</td> </tr>
+<tr> <td>HLTH</td> <td>102</td> </tr>
+<tr> <td>HLTH</td> <td>201</td> </tr>
+<tr> <td>HLTH</td> <td>218</td> </tr>
+<tr> <td>HLTH</td> <td>245</td> </tr>
+<tr> <td>HLTH</td> <td>253</td> </tr>
+<tr> <td>HLTH</td> <td>260</td> </tr>
+<tr> <td>HLTH</td> <td>301</td> </tr>
+<tr> <td>HLTH</td> <td>320</td> </tr>
+<tr> <td>HLTH</td> <td>352</td> </tr>
+<tr> <td>HLTH</td> <td>380</td> </tr>
+<tr> <td>HLTH</td> <td>412</td> </tr>
+<tr> <td>HLTH</td> <td>420</td> </tr>
+<tr> <td>HRM</td> <td>200</td> </tr>
+<tr> <td>HRTS</td> <td>*</td> </tr>
+<tr> <td>HUMSC</td> <td>101</td> </tr>
+<tr> <td>HUMSC</td> <td>102</td> </tr>
+<tr> <td>HUMSC</td> <td>201</td> </tr>
+<tr> <td>HUMSC</td> <td>301</td> </tr>
+<tr> <td>HUMSC</td> <td>401</td> </tr>
+<tr> <td>HUMSC</td> <td>490</td> </tr>
+<tr> <td>INDENT</td> <td>200</td> </tr>
+<tr> <td>INDENT</td> <td>210</td> </tr>
+<tr> <td>INDEV</td> <td>100</td> </tr>
+<tr> <td>INDEV</td> <td>101</td> </tr>
+<tr> <td>INDEV</td> <td>200</td> </tr>
+<tr> <td>INDEV</td> <td>212</td> </tr>
+<tr> <td>INDEV</td> <td>227</td> </tr>
+<tr> <td>INDEV</td> <td>262</td> </tr>
+<tr> <td>INDEV</td> <td>300</td> </tr>
+<tr> <td>INDEV</td> <td>302</td> </tr>
+<tr> <td>INDEV</td> <td>308</td> </tr>
+<tr> <td>INDEV</td> <td>387</td> </tr>
+<tr> <td>INDEV</td> <td>404</td> </tr>
+<tr> <td>INDEV</td> <td>475</td> </tr>
+<tr> <td>INDEV</td> <td>478</td> </tr>
+<tr> <td>INDG</td> <td>*</td> </tr>
+<tr> <td>INTEG</td> <td>120</td> </tr>
+<tr> <td>INTEG</td> <td>220</td> </tr>
+<tr> <td>INTEG</td> <td>221</td> </tr>
+<tr> <td>INTEG</td> <td>240</td> </tr>
+<tr> <td>INTEG</td> <td>251</td> </tr>
+<tr> <td>INTST</td> <td>101</td> </tr>
+<tr> <td>ITALST</td> <td>*</td> </tr>
+<tr> <td>JS</td> <td>*</td> </tr>
+<tr> <td>KIN</td> <td>352</td> </tr>
+<tr> <td>KIN</td> <td>354</td> </tr>
+<tr> <td>LAT</td> <td>202</td> </tr>
+<tr> <td>LAT</td> <td>331</td> </tr>
+<tr> <td>LAT</td> <td>332</td> </tr>
+<tr> <td>LAT</td> <td>381</td> </tr>
+<tr> <td>LAT</td> <td>421</td> </tr>
+<tr> <td>LS</td> <td>*</td> </tr>
+<tr> <td>MEDVL</td> <td>*</td> </tr>
+<tr> <td>MENN</td> <td>125</td> </tr>
+<tr> <td>MGMT</td> <td>220</td> </tr>
+<tr> <td>MGMT</td> <td>244</td> </tr>
+<tr> <td>MGMT</td> <td>345</td> </tr>
+<tr> <td>MSCI</td> <td>211</td> </tr>
+<tr> <td>MSCI</td> <td>263</td> </tr>
+<tr> <td>MSCI</td> <td>311</td> </tr>
+<tr> <td>MSCI</td> <td>411</td> </tr>
+<tr> <td>MSCI</td> <td>422</td> </tr>
+<tr> <td>MSCI</td> <td>442</td> </tr>
+<tr> <td>MSCI</td> <td>454</td> </tr>
+<tr> <td>MUSIC</td> <td>100</td> </tr>
+<tr> <td>MUSIC</td> <td>110</td> </tr>
+<tr> <td>MUSIC</td> <td>140</td> </tr>
+<tr> <td>MUSIC</td> <td>231</td> </tr>
+<tr> <td>MUSIC</td> <td>232</td> </tr>
+<tr> <td>MUSIC</td> <td>240</td> </tr>
+<tr> <td>MUSIC</td> <td>246</td> </tr>
+<tr> <td>MUSIC</td> <td>253</td> </tr>
+<tr> <td>MUSIC</td> <td>254</td> </tr>
+<tr> <td>MUSIC</td> <td>255</td> </tr>
+<tr> <td>MUSIC</td> <td>256</td> </tr>
+<tr> <td>MUSIC</td> <td>260</td> </tr>
+<tr> <td>MUSIC</td> <td>261</td> </tr>
+<tr> <td>MUSIC</td> <td>262</td> </tr>
+<tr> <td>MUSIC</td> <td>332</td> </tr>
+<tr> <td>MUSIC</td> <td>333</td> </tr>
+<tr> <td>MUSIC</td> <td>334</td> </tr>
+<tr> <td>MUSIC</td> <td>335</td> </tr>
+<tr> <td>MUSIC</td> <td>361</td> </tr>
+<tr> <td>MUSIC</td> <td>362</td> </tr>
+<tr> <td>MUSIC</td> <td>363</td> </tr>
+<tr> <td>MUSIC</td> <td>364</td> </tr>
+<tr> <td>NE</td> <td>109</td> </tr>
+<tr> <td>PACS</td> <td>*</td> </tr>
+<tr> <td>PHIL</td> <td>*</td> </tr>
+<tr> <td>PLAN</td> <td>100</td> </tr>
+<tr> <td>PLAN</td> <td>262</td> </tr>
+<tr> <td>PLAN</td> <td>341</td> </tr>
+<tr> <td>PLAN</td> <td>349</td> </tr>
+<tr> <td>PLAN</td> <td>362</td> </tr>
+<tr> <td>PLAN</td> <td>414</td> </tr>
+<tr> <td>PLAN</td> <td>415</td> </tr>
+<tr> <td>PLAN</td> <td>431</td> </tr>
+<tr> <td>PLAN</td> <td>432</td> </tr>
+<tr> <td>PLAN</td> <td>433</td> </tr>
+<tr> <td>PLAN</td> <td>471</td> </tr>
+<tr> <td>PSCI</td> <td>*</td> </tr>
+<tr> <td>PSYCH</td> <td>*</td> </tr>
+<tr> <td>REC</td> <td>100</td> </tr>
+<tr> <td>REC</td> <td>101</td> </tr>
+<tr> <td>REC</td> <td>200</td> </tr>
+<tr> <td>REC</td> <td>201</td> </tr>
+<tr> <td>REC</td> <td>202</td> </tr>
+<tr> <td>REC</td> <td>203</td> </tr>
+<tr> <td>REC</td> <td>206</td> </tr>
+<tr> <td>REC</td> <td>219</td> </tr>
+<tr> <td>REC</td> <td>230</td> </tr>
+<tr> <td>REC</td> <td>280</td> </tr>
+<tr> <td>REC</td> <td>306</td> </tr>
+<tr> <td>REC</td> <td>319</td> </tr>
+<tr> <td>REC</td> <td>356</td> </tr>
+<tr> <td>REC</td> <td>361</td> </tr>
+<tr> <td>REC</td> <td>362</td> </tr>
+<tr> <td>REC</td> <td>383</td> </tr>
+<tr> <td>REC</td> <td>408</td> </tr>
+<tr> <td>REC</td> <td>422</td> </tr>
+<tr> <td>REC</td> <td>425</td> </tr>
+<tr> <td>REES</td> <td>*</td> </tr>
+<tr> <td>RS</td> <td>*</td> </tr>
+<tr> <td>SCI</td> <td>266</td> </tr>
+<tr> <td>SCI</td> <td>267</td> </tr>
+<tr> <td>SDS</td> <td>*</td> </tr>
+<tr> <td>SI</td> <td>*</td> </tr>
+<tr> <td>SMF</td> <td>*</td> </tr>
+<tr> <td>SOC</td> <td>*</td> </tr>
+<tr> <td>SOCWK</td> <td>*</td> </tr>
+<tr> <td>SPAN</td> <td>150</td> </tr>
+<tr> <td>SPAN</td> <td>217</td> </tr>
+<tr> <td>SPAN</td> <td>234</td> </tr>
+<tr> <td>SPAN</td> <td>300</td> </tr>
+<tr> <td>SPAN</td> <td>317</td> </tr>
+<tr> <td>SPAN</td> <td>326</td> </tr>
+<tr> <td>SPAN</td> <td>329</td> </tr>
+<tr> <td>SPAN</td> <td>387</td> </tr>
+<tr> <td>SPAN</td> <td>400</td> </tr>
+<tr> <td>SPAN</td> <td>410</td> </tr>
+<tr> <td>SPAN</td> <td>430</td> </tr>
+<tr> <td>STV</td> <td>*</td> </tr>
+<tr> <td>SYDE</td> <td>261</td> </tr>
+<tr> <td>THPERF</td> <td>112</td> </tr>
+<tr> <td>THPERF</td> <td>200</td> </tr>
+<tr> <td>THPERF</td> <td>224</td> </tr>
+<tr> <td>THPERF</td> <td>246</td> </tr>
+<tr> <td>THPERF</td> <td>248</td> </tr>
+<tr> <td>THPERF</td> <td>278</td> </tr>
+<tr> <td>THPERF</td> <td>280</td> </tr>
+<tr> <td>THPERF</td> <td>282</td> </tr>
+<tr> <td>THPERF</td> <td>300</td> </tr>
+<tr> <td>THPERF</td> <td>371</td> </tr>
+<tr> <td>THPERF</td> <td>374</td> </tr>
+<tr> <td>THPERF</td> <td>376</td> </tr>
+<tr> <td>THPERF</td> <td>378</td> </tr>
+<tr> <td>THPERF</td> <td>386</td> </tr>
+<tr> <td>THPERF</td> <td>387</td> </tr>
+<tr> <td>VCULT</td> <td>100</td> </tr>
+<tr> <td>VCULT</td> <td>101</td> </tr>
+<tr> <td>VCULT</td> <td>112</td> </tr>
+<tr> <td>VCULT</td> <td>200</td> </tr>
+<tr> <td>VCULT</td> <td>300</td> </tr>
+<tr> <td> not ANTH</td> <td>204</td> </tr>
+<tr> <td> not ANTH</td> <td>251</td> </tr>
+<tr> <td> not ANTH</td> <td>289</td> </tr>
+<tr> <td> not ANTH</td> <td>305</td> </tr>
+<tr> <td> not ANTH</td> <td>345</td> </tr>
+<tr> <td> not ANTH</td> <td>355</td> </tr>
+<tr> <td> not ANTH</td> <td>365</td> </tr>
+<tr> <td> not ANTH</td> <td>371</td> </tr>
+<tr> <td> not ANTH</td> <td>372</td> </tr>
+<tr> <td> not ANTH</td> <td>377</td> </tr>
+<tr> <td> not ANTH</td> <td>389</td> </tr>
+<tr> <td> not ANTH</td> <td>391</td> </tr>
+<tr> <td> not ANTH</td> <td>395</td> </tr>
+<tr> <td> not ANTH</td> <td>455</td> </tr>
+<tr> <td> not ANTH</td> <td>489</td> </tr>
+<tr> <td> not ANTH</td> <td>498</td> </tr>
+<tr> <td> not ANTH</td> <td>499A</td> </tr>
+<tr> <td> not ANTH</td> <td>499B</td> </tr>
+<tr> <td> not CLAS</td> <td>390</td> </tr>
+<tr> <td> not CLAS</td> <td>4*</td> </tr>
+<tr> <td> not EASIA</td> <td>250R</td> </tr>
+<tr> <td> not EASIA</td> <td>291R</td> </tr>
+<tr> <td> not EASIA</td> <td>391R</td> </tr>
+<tr> <td> not ECON</td> <td>100</td> </tr>
+<tr> <td> not ECON</td> <td>211</td> </tr>
+<tr> <td> not ECON</td> <td>221</td> </tr>
+<tr> <td> not ECON</td> <td>290</td> </tr>
+<tr> <td> not ECON</td> <td>311</td> </tr>
+<tr> <td> not ECON</td> <td>322</td> </tr>
+<tr> <td> not ECON</td> <td>323</td> </tr>
+<tr> <td> not ECON</td> <td>361</td> </tr>
+<tr> <td> not ECON</td> <td>363</td> </tr>
+<tr> <td> not ECON</td> <td>371</td> </tr>
+<tr> <td> not ECON</td> <td>372</td> </tr>
+<tr> <td> not ECON</td> <td>381</td> </tr>
+<tr> <td> not ECON</td> <td>382</td> </tr>
+<tr> <td> not ECON</td> <td>391</td> </tr>
+<tr> <td> not ECON</td> <td>392</td> </tr>
+<tr> <td> not ECON</td> <td>412</td> </tr>
+<tr> <td> not ECON</td> <td>42*</td> </tr>
+<tr> <td> not ECON</td> <td>452</td> </tr>
+<tr> <td> not ECON</td> <td>456</td> </tr>
+<tr> <td> not ECON</td> <td>47*</td> </tr>
+<tr> <td> not ECON</td> <td>48*</td> </tr>
+<tr> <td> not ECON</td> <td>49*</td> </tr>
+<tr> <td> not ENGL</td> <td>109</td> </tr>
+<tr> <td> not ENGL</td> <td>119</td> </tr>
+<tr> <td> not ENGL</td> <td>129R</td> </tr>
+<tr> <td> not ENGL</td> <td>140R</td> </tr>
+<tr> <td> not ENGL</td> <td>191</td> </tr>
+<tr> <td> not ENGL</td> <td>192</td> </tr>
+<tr> <td> not ENGL</td> <td>193</td> </tr>
+<tr> <td> not ENGL</td> <td>203</td> </tr>
+<tr> <td> not ENGL</td> <td>204</td> </tr>
+<tr> <td> not ENGL</td> <td>209</td> </tr>
+<tr> <td> not ENGL</td> <td>210E</td> </tr>
+<tr> <td> not ENGL</td> <td>210F</td> </tr>
+<tr> <td> not ENGL</td> <td>210G</td> </tr>
+<tr> <td> not ENGL</td> <td>210H</td> </tr>
+<tr> <td> not ENGL</td> <td>210I</td> </tr>
+<tr> <td> not ENGL</td> <td>210J</td> </tr>
+<tr> <td> not ENGL</td> <td>303</td> </tr>
+<tr> <td> not ENGL</td> <td>304</td> </tr>
+<tr> <td> not ENGL</td> <td>306A</td> </tr>
+<tr> <td> not ENGL</td> <td>306B</td> </tr>
+<tr> <td> not ENGL</td> <td>306G</td> </tr>
+<tr> <td> not ENGL</td> <td>309E</td> </tr>
+<tr> <td> not ENGL</td> <td>373</td> </tr>
+<tr> <td> not ENGL</td> <td>375</td> </tr>
+<tr> <td> not ENGL</td> <td>378</td> </tr>
+<tr> <td> not ENGL</td> <td>403</td> </tr>
+<tr> <td> not ENGL</td> <td>408B</td> </tr>
+<tr> <td> not ENGL</td> <td>408C</td> </tr>
+<tr> <td> not ENGL</td> <td>472</td> </tr>
+<tr> <td> not ENGL</td> <td>48*</td> </tr>
+<tr> <td> not ENGL</td> <td>49*</td> </tr>
+<tr> <td> not GSJ</td> <td>271</td> </tr>
+<tr> <td> not GSJ</td> <td>371</td> </tr>
+<tr> <td> not GSJ</td> <td>401</td> </tr>
+<tr> <td> not GSJ</td> <td>402</td> </tr>
+<tr> <td> not GSJ</td> <td>408</td> </tr>
+<tr> <td> not GSJ</td> <td>410</td> </tr>
+<tr> <td> not GSJ</td> <td>463</td> </tr>
+<tr> <td> not GSJ</td> <td>472</td> </tr>
+<tr> <td> not GSJ</td> <td>473</td> </tr>
+<tr> <td> not HIST</td> <td>391</td> </tr>
+<tr> <td> not HIST</td> <td>397</td> </tr>
+<tr> <td> not HIST</td> <td>398</td> </tr>
+<tr> <td> not HIST</td> <td>4*</td> </tr>
+<tr> <td> not HLTH</td> <td>401</td> </tr>
+<tr> <td> not HRTS</td> <td>390</td> </tr>
+<tr> <td> not HRTS</td> <td>490</td> </tr>
+<tr> <td> not INDG</td> <td>101</td> </tr>
+<tr> <td> not INDG</td> <td>102</td> </tr>
+<tr> <td> not ITALST</td> <td>296</td> </tr>
+<tr> <td> not ITALST</td> <td>394</td> </tr>
+<tr> <td> not ITALST</td> <td>396</td> </tr>
+<tr> <td> not JS</td> <td>350</td> </tr>
+<tr> <td> not JS</td> <td>450</td> </tr>
+<tr> <td> not LS</td> <td>203</td> </tr>
+<tr> <td> not LS</td> <td>221</td> </tr>
+<tr> <td> not LS</td> <td>229</td> </tr>
+<tr> <td> not LS</td> <td>280</td> </tr>
+<tr> <td> not LS</td> <td>283</td> </tr>
+<tr> <td> not LS</td> <td>322</td> </tr>
+<tr> <td> not LS</td> <td>330</td> </tr>
+<tr> <td> not LS</td> <td>403</td> </tr>
+<tr> <td> not LS</td> <td>404</td> </tr>
+<tr> <td> not LS</td> <td>405</td> </tr>
+<tr> <td> not LS</td> <td>413</td> </tr>
+<tr> <td> not LS</td> <td>419</td> </tr>
+<tr> <td> not LS</td> <td>422</td> </tr>
+<tr> <td> not LS</td> <td>423</td> </tr>
+<tr> <td> not LS</td> <td>425</td> </tr>
+<tr> <td> not LS</td> <td>428</td> </tr>
+<tr> <td> not LS</td> <td>431</td> </tr>
+<tr> <td> not LS</td> <td>433</td> </tr>
+<tr> <td> not LS</td> <td>434</td> </tr>
+<tr> <td> not LS</td> <td>435</td> </tr>
+<tr> <td> not LS</td> <td>461</td> </tr>
+<tr> <td> not LS</td> <td>496</td> </tr>
+<tr> <td> not LS</td> <td>498</td> </tr>
+<tr> <td> not LS</td> <td>526</td> </tr>
+<tr> <td> not MEDVL</td> <td>291</td> </tr>
+<tr> <td> not MEDVL</td> <td>391</td> </tr>
+<tr> <td> not MEDVL</td> <td>491</td> </tr>
+<tr> <td> not PACS</td> <td>290</td> </tr>
+<tr> <td> not PACS</td> <td>301</td> </tr>
+<tr> <td> not PACS</td> <td>302</td> </tr>
+<tr> <td> not PACS</td> <td>39*</td> </tr>
+<tr> <td> not PACS</td> <td>4*</td> </tr>
+<tr> <td> not PHIL</td> <td>216</td> </tr>
+<tr> <td> not PHIL</td> <td>240</td> </tr>
+<tr> <td> not PHIL</td> <td>252</td> </tr>
+<tr> <td> not PHIL</td> <td>271</td> </tr>
+<tr> <td> not PHIL</td> <td>340</td> </tr>
+<tr> <td> not PHIL</td> <td>350</td> </tr>
+<tr> <td> not PHIL</td> <td>355</td> </tr>
+<tr> <td> not PHIL</td> <td>358</td> </tr>
+<tr> <td> not PHIL</td> <td>371</td> </tr>
+<tr> <td> not PHIL</td> <td>40*</td> </tr>
+<tr> <td> not PHIL</td> <td>41*</td> </tr>
+<tr> <td> not PHIL</td> <td>42*</td> </tr>
+<tr> <td> not PHIL</td> <td>43*</td> </tr>
+<tr> <td> not PHIL</td> <td>44*</td> </tr>
+<tr> <td> not PHIL</td> <td>452</td> </tr>
+<tr> <td> not PHIL</td> <td>455</td> </tr>
+<tr> <td> not PHIL</td> <td>458</td> </tr>
+<tr> <td> not PHIL</td> <td>459</td> </tr>
+<tr> <td> not PHIL</td> <td>46*</td> </tr>
+<tr> <td> not PHIL</td> <td>47*</td> </tr>
+<tr> <td> not PHIL</td> <td>48*</td> </tr>
+<tr> <td> not PHIL</td> <td>49*</td> </tr>
+<tr> <td> not PSCI</td> <td>299</td> </tr>
+<tr> <td> not PSCI</td> <td>314</td> </tr>
+<tr> <td> not PSCI</td> <td>315</td> </tr>
+<tr> <td> not PSCI</td> <td>360</td> </tr>
+<tr> <td> not PSCI</td> <td>390</td> </tr>
+<tr> <td> not PSCI</td> <td>391</td> </tr>
+<tr> <td> not PSCI</td> <td>400</td> </tr>
+<tr> <td> not PSCI</td> <td>403</td> </tr>
+<tr> <td> not PSCI</td> <td>426</td> </tr>
+<tr> <td> not PSCI</td> <td>433</td> </tr>
+<tr> <td> not PSCI</td> <td>437</td> </tr>
+<tr> <td> not PSCI</td> <td>485</td> </tr>
+<tr> <td> not PSCI</td> <td>49*</td> </tr>
+<tr> <td> not PSYCH</td> <td>207</td> </tr>
+<tr> <td> not PSYCH</td> <td>261</td> </tr>
+<tr> <td> not PSYCH</td> <td>264</td> </tr>
+<tr> <td> not PSYCH</td> <td>291</td> </tr>
+<tr> <td> not PSYCH</td> <td>292</td> </tr>
+<tr> <td> not PSYCH</td> <td>306</td> </tr>
+<tr> <td> not PSYCH</td> <td>307</td> </tr>
+<tr> <td> not PSYCH</td> <td>335</td> </tr>
+<tr> <td> not PSYCH</td> <td>363</td> </tr>
+<tr> <td> not PSYCH</td> <td>375R</td> </tr>
+<tr> <td> not PSYCH</td> <td>389</td> </tr>
+<tr> <td> not PSYCH</td> <td>39*</td> </tr>
+<tr> <td> not PSYCH</td> <td>420</td> </tr>
+<tr> <td> not PSYCH</td> <td>447</td> </tr>
+<tr> <td> not PSYCH</td> <td>45*</td> </tr>
+<tr> <td> not PSYCH</td> <td>46*</td> </tr>
+<tr> <td> not PSYCH</td> <td>47*</td> </tr>
+<tr> <td> not PSYCH</td> <td>48*</td> </tr>
+<tr> <td> not PSYCH</td> <td>49*</td> </tr>
+<tr> <td> not REES</td> <td>260</td> </tr>
+<tr> <td> not RS</td> <td>101</td> </tr>
+<tr> <td> not RS</td> <td>102</td> </tr>
+<tr> <td> not RS</td> <td>223</td> </tr>
+<tr> <td> not RS</td> <td>224</td> </tr>
+<tr> <td> not RS</td> <td>271</td> </tr>
+<tr> <td> not RS</td> <td>291</td> </tr>
+<tr> <td> not RS</td> <td>391</td> </tr>
+<tr> <td> not RS</td> <td>395</td> </tr>
+<tr> <td> not RS</td> <td>398</td> </tr>
+<tr> <td> not RS</td> <td>462</td> </tr>
+<tr> <td> not RS</td> <td>491</td> </tr>
+<tr> <td> not RS</td> <td>495</td> </tr>
+<tr> <td> not RS</td> <td>498</td> </tr>
+<tr> <td> not RS</td> <td>499</td> </tr>
+<tr> <td> not SDS</td> <td>150R</td> </tr>
+<tr> <td> not SDS</td> <td>250R</td> </tr>
+<tr> <td> not SDS</td> <td>251R</td> </tr>
+<tr> <td> not SDS</td> <td>370R</td> </tr>
+<tr> <td> not SDS</td> <td>375R</td> </tr>
+<tr> <td> not SDS</td> <td>398R</td> </tr>
+<tr> <td> not SDS</td> <td>399R</td> </tr>
+<tr> <td> not SDS</td> <td>450R</td> </tr>
+<tr> <td> not SDS</td> <td>451R</td> </tr>
+<tr> <td> not SDS</td> <td>49*</td> </tr>
+<tr> <td> not SI</td> <td>375R</td> </tr>
+<tr> <td> not SMF</td> <td>200</td> </tr>
+<tr> <td> not SMF</td> <td>220</td> </tr>
+<tr> <td> not SMF</td> <td>230</td> </tr>
+<tr> <td> not SMF</td> <td>310</td> </tr>
+<tr> <td> not SMF</td> <td>365</td> </tr>
+<tr> <td> not SMF</td> <td>366</td> </tr>
+<tr> <td> not SMF</td> <td>4*</td> </tr>
+<tr> <td> not SOC</td> <td>221</td> </tr>
+<tr> <td> not SOC</td> <td>229</td> </tr>
+<tr> <td> not SOC</td> <td>230</td> </tr>
+<tr> <td> not SOC</td> <td>280</td> </tr>
+<tr> <td> not SOC</td> <td>322</td> </tr>
+<tr> <td> not SOC</td> <td>330</td> </tr>
+<tr> <td> not SOC</td> <td>362</td> </tr>
+<tr> <td> not SOC</td> <td>375R</td> </tr>
+<tr> <td> not SOC</td> <td>398R</td> </tr>
+<tr> <td> not SOC</td> <td>399R</td> </tr>
+<tr> <td> not SOC</td> <td>40*</td> </tr>
+<tr> <td> not SOC</td> <td>41*</td> </tr>
+<tr> <td> not SOC</td> <td>42*</td> </tr>
+<tr> <td> not SOC</td> <td>430</td> </tr>
+<tr> <td> not SOC</td> <td>432</td> </tr>
+<tr> <td> not SOC</td> <td>433</td> </tr>
+<tr> <td> not SOC</td> <td>434</td> </tr>
+<tr> <td> not SOC</td> <td>435</td> </tr>
+<tr> <td> not SOC</td> <td>436</td> </tr>
+<tr> <td> not SOC</td> <td>44*</td> </tr>
+<tr> <td> not SOC</td> <td>45*</td> </tr>
+<tr> <td> not SOC</td> <td>46*</td> </tr>
+<tr> <td> not SOC</td> <td>49*</td> </tr>
+<tr> <td> not SOCWK</td> <td>375R</td> </tr>
+<tr> <td> not SOCWK</td> <td>390A</td> </tr>
+<tr> <td> not SOCWK</td> <td>390B</td> </tr>
+<tr> <td> not SOCWK</td> <td>398R</td> </tr>
+<tr> <td> not SOCWK</td> <td>399R</td> </tr>
+<tr> <td> not SOCWK</td> <td>450R</td> </tr>
+<tr> <td> not SOCWK</td> <td>490R</td> </tr>
+<tr> <td> not STV</td> <td>201</td> </tr>
+<tr> <td> not STV</td> <td>400</td> </tr>
+<tr> <td> not STV</td> <td>401</td> </tr>
+</table> </td> </tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
