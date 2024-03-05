@@ -340,7 +340,6 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
     missing_courses.number_of_mandatory_courses = mandatory_course_count
 
     for req in reqs:
-        print(req.course_codes, req.term)
         req_long_name = tag_name_to_object(req.term).long_name
         if req.term != "MLSTN" and req.term != "PDENG" and req.term != "WKRPT" and req.term != "PD":
             if "," in req.course_codes:
