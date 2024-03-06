@@ -3,14 +3,14 @@ import requests
 from fastapi import FastAPI, Depends, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from db.models import CourseModel, EngineeringDisciplineModel
-from db.schema import CourseWithTagsSchema, MissingReqs, OptionsSchema, CoursesTakenIn, OptionRequirement, DegreeMissingReqs, \
+from db.schema import CourseWithTagsSchema, MissingReqs, OptionsSchema, CoursesTakenIn, OptionRequirement, \
+    DegreeMissingReqs, \
     DegreeReqs, DegreeMissingIn, RequirementsResult
 from collections import defaultdict
 from db.schema import CanTakeCourseBatch, RequirementsResults
 from db.database import SessionLocal
 from sqladmin import Admin
 from sqlalchemy.orm import Session
-
 
 from db import engine
 from db.admin import admin_views
@@ -112,14 +112,15 @@ def courses_can_take_batch(course_codes_can_take: CanTakeCourseBatch, db: Sessio
     for course_code in course_codes_can_take.can_take_course_codes:
         can_take = can_take_course(db, course_code.course_codes_taken, course_code.course_code)
         res_dict.append(RequirementsResult(result=can_take[0], message=can_take[1]))
-    
+
     res.results = res_dict
     return res
+
 
 @app.post('/courses/can-take/{course_code}', response_model=RequirementsResult)
 def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Session = Depends(get_db)):
     can_take = can_take_course(db, courses_taken.course_codes_taken, course_code)
-    res = RequirementsResults(result=can_take[0], message=can_take[1])
+    res = RequirementsResult(result=can_take[0], message=can_take[1])
     return res
 
 
@@ -135,7 +136,8 @@ def search_courses(degree_name: Annotated[str, "The degree name, e.g. 'managemen
                    db: Session = Depends(get_db)
                    ):
     courses = search_and_populate_courses(q=q, offset=offset, page_size=page_size, degree_name=degree_name,
-                                          degree_year=degree_year, db=db, option_name=option_name, option_year=option_year)
+                                          degree_year=degree_year, db=db, option_name=option_name,
+                                          option_year=option_year)
 
     return courses
 
@@ -153,9 +155,9 @@ def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineer
     course_codes_list = list(courses_dict.keys())
 
     courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_codes_list)).all()
-    
+
     populate_courses_tags(courses=courses, courses_tag_dict=courses_dict)
-    
+
     return courses
 
 

@@ -27,6 +27,7 @@ class ColorsEnum(str, Enum):
     slate = "slate"
     rose = "rose"
 
+
 class TagSchema(CamelModel):
     code: str  # e.g. "te", "mand"
     color: ColorsEnum  # e.g. "red", "green"
