@@ -24,7 +24,8 @@ class ColorsEnum(str, Enum):
     pink = "pink"
     indigo = "indigo"
     gray = "gray"
-
+    slate = "slate"
+    rose = "rose"
 
 class TagSchema(CamelModel):
     code: str  # e.g. "te", "mand"
@@ -154,6 +155,7 @@ class MissingList(CamelModel):
     list_name: str
     courses: dict[str, bool]
     total_course_to_complete: int
+    tag: TagSchema
 
 
 class MissingReqs(CamelModel):

@@ -152,24 +152,24 @@ def tag_name_to_object(tag_name: str) -> TagSchema:
         "4A": TagSchema(code='4A', color='blue', short_name='4A', long_name='4A'),
         "4B": TagSchema(code='4B', color='blue', short_name='4B', long_name='4B'),
         "ATE": TagSchema(code='ATE', color='red', short_name='ATE', long_name='ATE'),
-        "CSE": TagSchema(code='CSE', color='yellow', short_name='CSE', long_name='Complimentary Studies Elective'),
+        "CSE": TagSchema(code='CSE', color='indigo', short_name='CSE', long_name='Complimentary Studies Elective'),
         "ELEC": TagSchema(code='ELEC', color='green', short_name='ELEC', long_name='Elective'),
-        "ETHICS": TagSchema(code='ETHICS', color='yellow', short_name='ETHICS', long_name='Ethics'),
+        "ETHICS": TagSchema(code='ETHICS', color='purple', short_name='ETHICS', long_name='Ethics'),
         "LE": TagSchema(code='LE', color='yellow', short_name='LE', long_name='Linkage Electives'),
         "MLSTN": TagSchema(code='MLSTN', color='green', short_name='MLSTN', long_name='Milestone'),
         "NSE": TagSchema(code='NSE', color='yellow', short_name='NSE', long_name='Natural Science Elective'),
         "PD": TagSchema(code='PD', color='yellow', short_name='PD', long_name='Professional Development'),
         "PDENG": TagSchema(code='PDENG', color='yellow', short_name='PDENG', long_name='Professional Development'),
         "PRACTICE": TagSchema(code='PRACTICE', color='yellow', short_name='PRACTICE', long_name='Practice'),
-        "TE": TagSchema(code='TE', color='red', short_name='TE', long_name='Technical Elective'),
+        "TE": TagSchema(code='TE', color='rose', short_name='TE', long_name='Technical Elective'),
         "WKRPT": TagSchema(code='WKRPT', color='yellow', short_name='WKRPT', long_name='Work Report'),
         "WKTRM": TagSchema(code='WKTRM', color='yellow', short_name='WKTRM', long_name='Work Term'),
         "WTREF": TagSchema(code='WTREF', color='yellow', short_name='WTREF', long_name='Work Term Reflection'),
         'SCE': TagSchema(code='SCE', color='yellow', short_name='SCE', long_name='Science Elective'),
-        "elective": TagSchema(code='elective', color='purple', short_name='elective', long_name='Elective'),
-        "organizational_studies": TagSchema(code='organizational_studies', color='orange', short_name='organizational_studies', long_name='Organizational Studies'),
-        "eng_econ": TagSchema(code='eng_econ', color='yellow', short_name='pink', long_name='Engineering Economics'),
-        "opti_1": TagSchema(code='opti_1', color='yellow', short_name='indigo', long_name='Optimization'),
+        "elective": TagSchema(code='elective', color='green', short_name='elective', long_name='Option Elective'),
+        "organizational_studies": TagSchema(code='organizational_studies', color='red', short_name='organizational_studies', long_name='Organizational Studies'),
+        "eng_econ": TagSchema(code='eng_econ', color='orange', short_name='eng_econ', long_name='Engineering Economics'),
+        "opti_1": TagSchema(code='opti_1', color='yellow', short_name='opti_1', long_name='Optimization'),
     }
 
     return name_to_schema[tag_name]
@@ -378,7 +378,6 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                         missing_courses.mandatory_courses.append(req.course_codes)
                     else:
                         missing_courses.additional_reqs[req_long_name] = AdditionalReqCount(completed="0", total="1", tag=tag_name_to_object(req.term))
-    print(missing_courses)
     return missing_courses
 
 
@@ -420,7 +419,8 @@ def find_missing_requirements(course_list: list[str], requirements):
         missing_requirement = MissingList(
             list_name=requirement.name,
             courses=courses_dict,
-            totalCourseToComplete=total_courses_to_complete
+            totalCourseToComplete=total_courses_to_complete,
+            tag=tag_name_to_object(requirement.name)
         )
 
         missing_requirements.lists.append(missing_requirement)

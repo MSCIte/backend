@@ -24,7 +24,7 @@ app = FastAPI()
 origins = [
     # Prod and deploy previews
     "https://mscite.netlify.app",
-    "https://*mscite.netlify.app",
+    "https://mscite-dev.netlify.app",
     # Local dev
     "http://localhost",
     "http://localhost:5173",
@@ -146,8 +146,6 @@ def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineer
          db: Session = Depends(get_db)):
     courses_dict = get_degree_tags(degree_name, degree_year, db)
     if option_name and option_year:
-        print("courses dict: ", courses_dict)
-        print("option dict: ", get_option_tags(option_name, option_year, db))
         courses_dict = merge_dicts(courses_dict, get_option_tags(option_name, option_year, db))
 
     course_codes_list = list(courses_dict.keys())
@@ -155,6 +153,7 @@ def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineer
     courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_codes_list)).all()
     
     populate_courses_tags(courses=courses, courses_tag_dict=courses_dict)
+    
     return courses
 
 
