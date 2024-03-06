@@ -109,9 +109,11 @@ def degree_missing_reqs(degree_id: str, degree_missing_in: DegreeMissingIn = Bod
 def courses_can_take_batch(course_codes_can_take: CanTakeCourseBatch, db: Session = Depends(get_db)):
     res = RequirementsResults(results=[])
     res_dict = []
-    for course_code in course_codes_can_take.can_take_course_codes:
-        can_take = can_take_course(db, course_code.course_codes_taken, course_code.course_code)
-        res_dict.append(RequirementsResult(result=can_take[0], message=can_take[1]))
+    for ind, course_input in enumerate(course_codes_can_take.can_take_course_codes):
+        can_take = can_take_course(db, course_input.course_codes_taken, course_input.course_code)
+        res_dict.append(
+            RequirementsResult(result=can_take[0], message=can_take[1], course_code=course_input.course_code,
+                               term=course_codes_can_take.can_take_course_codes[ind].term))
 
     res.results = res_dict
     return res
@@ -120,7 +122,7 @@ def courses_can_take_batch(course_codes_can_take: CanTakeCourseBatch, db: Sessio
 @app.post('/courses/can-take/{course_code}', response_model=RequirementsResult)
 def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Session = Depends(get_db)):
     can_take = can_take_course(db, courses_taken.course_codes_taken, course_code)
-    res = RequirementsResult(result=can_take[0], message=can_take[1])
+    res = RequirementsResult(result=can_take[0], message=can_take[1], course_code=course_code, term=courses_taken.term)
     return res
 
 

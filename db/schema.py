@@ -81,6 +81,7 @@ class PrereqSchema(CamelModel):
 
 class CoursesTakenIn(CamelModel):
     course_codes_taken: list[str]
+    term: str
 
     class Config:
         from_attributes = True
@@ -89,6 +90,7 @@ class CoursesTakenIn(CamelModel):
 class CanTakeCourseQuery(CamelModel):
     course_code: str
     course_codes_taken: list[str]
+    term: str
 
     class Config:
         from_attributes = True
@@ -112,6 +114,8 @@ class DegreeMissingIn(CamelModel):
 class RequirementsResult(CamelModel):
     result: bool
     message: str
+    course_code: str
+    term: str
 
     class Config:
         from_attributes = True
