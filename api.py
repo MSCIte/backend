@@ -330,7 +330,7 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
             .all()
         )
 
-    missing_courses = DegreeMissingReqs(mandatory_courses=[], number_of_mandatory_courses=0, additional_reqs={})
+    missing_courses = DegreeMissingReqs(mandatory_courses=[], number_of_mandatory_courses=0, tag=tag_name_to_object("1A"), additional_reqs={})
 
     mandatory_course_count = 0
     for req in reqs:
@@ -364,7 +364,8 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                 else:
                     if req_long_name not in missing_courses.additional_reqs:
                         missing_courses.additional_reqs[req_long_name] = AdditionalReqCount(completed=str(count),
-                                                                                       total=str(req.number_of_courses))
+                                                                                       total=str(req.number_of_courses),
+                                                                                       tag=tag_name_to_object(req.term))
                     else:
                         missing_courses.additional_reqs[req_long_name].completed = str(
                             int(missing_courses.additional_reqs[req_long_name].completed) + count)
@@ -376,7 +377,8 @@ def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year:
                     if re.match(r'^\d[A-Z]$', req.term):
                         missing_courses.mandatory_courses.append(req.course_codes)
                     else:
-                        missing_courses.additional_reqs[req_long_name] = AdditionalReqCount(completed="0", total="1")
+                        missing_courses.additional_reqs[req_long_name] = AdditionalReqCount(completed="0", total="1", tag=tag_name_to_object(req.term))
+    print(missing_courses)
     return missing_courses
 
 

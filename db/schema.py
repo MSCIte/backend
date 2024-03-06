@@ -125,6 +125,7 @@ class RequirementsResults(CamelModel):
 class AdditionalReqCount(CamelModel):
     completed: str
     total: str
+    tag: TagSchema
 
 
 # class DegreeMissingReqs(CamelModel):
@@ -136,6 +137,7 @@ class DegreeMissingReqs(CamelModel):
     mandatory_courses: list[str]
     number_of_mandatory_courses: int
     additional_reqs: dict[str, AdditionalReqCount]
+    tag: TagSchema
 
 
 class DegreeRequirement(CamelModel):
