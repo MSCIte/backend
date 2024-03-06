@@ -259,8 +259,15 @@ def get_option_tags(option_name: str, option_year: str, db: Session) -> dict[str
     return tags_dict
 
 
-def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size: int, degree_name: str, db: Session) -> \
-        (list)[CourseWithTagsSchema]:
+def search_and_populate_courses(q: str, 
+                                offset: int, 
+                                degree_year: int, 
+                                page_size: int, 
+                                degree_name: str, 
+                                db: Session, 
+                                option_name: str = "", 
+                                option_year: str = ""
+                            ) -> (list)[CourseWithTagsSchema]:
     q = q.replace(" ", "")
     courses = (
     db.query(CourseModel)
@@ -283,15 +290,18 @@ def search_and_populate_courses(q: str, offset: int, degree_year: int, page_size
     .limit(page_size)
     ).all()
 
-    populate_courses_tags_search(degree_name=degree_name, year=str(degree_year), courses=courses, db=db)
+    populate_courses_tags_search(degree_name=degree_name, year=str(degree_year), courses=courses, option_name=option_name, option_year=(option_year), db=db)
     return courses
 
-def populate_courses_tags_search(degree_name: str, year: str, courses: list[CourseWithTagsSchema], db: Session) -> None:
+def populate_courses_tags_search(degree_name: str, year: str, courses: list[CourseWithTagsSchema], db: Session, option_name: str = "", 
+                                option_year: str = "") -> None:
     """
     Mutates the course object to include tags
     """
     for course in courses:
         tags = get_degree_tags(degree_name=degree_name, degree_year=year, db=db)
+        if option_name and option_year:
+            tags = merge_dicts(tags, get_option_tags(option_name, option_year, db))
         # EngineeringDisciplines table has no space in course codes, other tables do
         course_code_no_space = course.course_code.replace(" ", "")
         course_tags = tags[course_code_no_space] if course_code_no_space in tags else ['ELEC']
