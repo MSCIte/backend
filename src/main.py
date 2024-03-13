@@ -129,7 +129,7 @@ def courses_can_take(course_code: str, courses_taken: CoursesTakenIn, db: Sessio
 # done
 @app.get('/courses/search', response_model=list[CourseWithTagsSchema])
 def search_courses(degree_name: Annotated[str, "The degree name, e.g. 'management_engineering'"],
-                   degree_year: Annotated[int, "The year the plan was declared"],
+                   degree_year: Annotated[str, "The year the plan was declared"],
                    option_name: Annotated[str, "The option name, e.g. 'management_engineering'"] = "",
                    option_year: Annotated[str, "The year the plan was declared"] = "",
                    q: str | None = None,
