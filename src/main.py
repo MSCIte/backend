@@ -3,9 +3,8 @@ import requests
 from fastapi import FastAPI, Depends, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from db.models import CourseModel, EngineeringDisciplineModel
-from db.schema import CourseWithTagsSchema, MissingReqs, OptionsSchema, CoursesTakenIn, OptionRequirement, \
-    DegreeMissingReqs, \
-    DegreeReqs, DegreeMissingIn, RequirementsResult
+from db.schema import CourseWithTagsSchema, MissingReqs, OptionsSchema, CoursesTakenIn, OptionRequirement, DegreeMissingReqs, \
+    DegreeReqs, DegreeMissingIn, RequirementsResult, SamplePath
 from collections import defaultdict
 from db.schema import CanTakeCourseBatch, RequirementsResults
 from db.database import SessionLocal
@@ -17,7 +16,7 @@ from db.admin import admin_views
 from db.database import SessionLocal
 from .validation import can_take_course
 from api import get_options_reqs, get_degree_reqs, get_all_degrees, get_degree_missing_reqs, get_option_missing_reqs, \
-    get_degree_tags, search_and_populate_courses, populate_courses_tags, get_option_tags, merge_dicts
+    get_degree_tags, search_and_populate_courses, populate_courses_tags, get_option_tags, merge_dicts, get_sample_paths
 
 app = FastAPI()
 
@@ -163,11 +162,12 @@ def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineer
     return courses
 
 
-@app.get('/sample-path')
-def sample_path():
-    return {
-        "lol": "rooined"
-    }
+@app.get('/sample-path/{degree_name}', response_model=list[SamplePath])
+def sample_path(degree_name: str, db: Session = Depends(get_db)):
+    print("HELLO?", degree_name)
+    res = get_sample_paths(degree_name, db)
+    print(res)
+    return res
 
 
 # Devops things

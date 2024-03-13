@@ -165,3 +165,8 @@ class MissingList(CamelModel):
 
 class MissingReqs(CamelModel):
     lists: list[MissingList]
+
+
+class SamplePath(CamelModel):
+    course_code: str
+    order_num: int
