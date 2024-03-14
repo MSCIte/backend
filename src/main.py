@@ -25,6 +25,7 @@ origins = [
     # Prod and deploy previews
     "https://mscite.netlify.app",
     "https://mscite-dev.netlify.app",
+    'https://.*\.netlify\.app',
     # Local dev
     "http://localhost",
     "http://localhost:5173",
@@ -139,7 +140,8 @@ def search_courses(degree_name: Annotated[str, "The degree name, e.g. 'managemen
                    db: Session = Depends(get_db)
                    ):
     courses = search_and_populate_courses(q=q, offset=offset, page_size=page_size, degree_name=degree_name,
-                                          degree_year=degree_year, db=db, option_name=option_name, option_year=option_year, tag=tag)
+                                          degree_year=degree_year, db=db, option_name=option_name,
+                                          option_year=option_year, tag=tag)
 
     return courses
 
