@@ -4,11 +4,10 @@ from functools import lru_cache
 
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, case, desc, func, or_, text
-from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel
+from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel, SamplePathModel
 from db.database import SessionLocal
 from db.schema import MissingList, MissingReqs, OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, \
-    AdditionalReqCount, \
-    DegreeReqs, DegreeRequirement, CourseWithTagsSchema, TagSchema
+    AdditionalReqCount, SamplePath, DegreeReqs, DegreeRequirement, CourseWithTagsSchema, TagSchema
 import re
 
 db = SessionLocal()
@@ -502,6 +501,20 @@ def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTak
 
     return missing_requirements
 
+
+def get_sample_paths(degree_name, db: Session):
+    sample_paths = (
+        db.query(SamplePathModel.course_code, SamplePathModel.course_order)
+        .filter(SamplePathModel.engineering_discipline == degree_name)
+        .all()
+    )
+
+    sample_path = []
+
+    for course in sample_paths:
+        sample_path.append(SamplePath(course_code=course.course_code, order_num=course.course_order))
+    return sample_path
+    
 # get_degree_missing_reqs("software_engineering", ["CS137", "ECE105", "MATH115", "MATH119", "CS241", "ECE313"], "2023")
 # get_options_reqs("management_sciences_option", db)
 
