@@ -164,7 +164,6 @@ def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineer
 
 @app.get('/sample-path/{degree_name}', response_model=list[SamplePath])
 def sample_path(degree_name: str, db: Session = Depends(get_db)):
-    print("HELLO?", degree_name)
     res = get_sample_paths(degree_name, db)
     print(res)
     return res

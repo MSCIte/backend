@@ -462,7 +462,6 @@ def get_sample_paths(degree_name, db: Session):
 
     for course in sample_paths:
         sample_path.append(SamplePath(course_code=course.course_code, order_num=course.course_order))
-    print("YOOO", sample_paths)
     return sample_path
     
 # get_degree_missing_reqs("software_engineering", ["CS137", "ECE105", "MATH115", "MATH119", "CS241", "ECE313"], "2023")
