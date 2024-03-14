@@ -25,7 +25,6 @@ origins = [
     # Prod and deploy previews
     "https://mscite.netlify.app",
     "https://mscite-dev.netlify.app",
-    'https://.*\.netlify\.app',
     # Local dev
     "http://localhost",
     "http://localhost:5173",
@@ -35,6 +34,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
+    allow_origin_regex='https://.*\.netlify\.app',
     allow_methods=["*"],
     allow_headers=["*"],
 )
