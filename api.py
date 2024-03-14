@@ -271,7 +271,7 @@ def search_and_populate_courses(q: str,
     q = q.replace(" ", "")
     if tag:
         course_list = []
-        deg_reqs_tag_filtered =  (
+        tag_filtered =  (
         db.query(EngineeringDisciplineModel.discipline_name,
                 EngineeringDisciplineModel.course_codes,
                 EngineeringDisciplineModel.term).filter(
@@ -282,7 +282,21 @@ def search_and_populate_courses(q: str,
             )
         )).all()
         
-        for c in deg_reqs_tag_filtered:
+        if not tag_filtered:
+            print("HERE")
+            tag_filtered = (
+            db.query(OptionsModel.option_name,
+                     OptionsModel.course_codes,
+                     OptionsModel.name).filter(
+                and_(
+                    OptionsModel.option_name == option_name,
+                    OptionsModel.year == str(option_year),
+                    OptionsModel.name == tag
+                )
+            )).all()
+            print(tag_filtered)
+            
+        for c in tag_filtered:
             course_list += c.course_codes.split(", ")
         courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_list))
         courses = (
@@ -495,4 +509,6 @@ def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTak
 # get_option_missing_reqs(option_id="management_sciences_option", courses_taken=courseCodesTaken, year="2023")
 
 # get_degree_reqs("systems_design_engineering", "2023", db)
-# search_and_populate_courses(q= "earth", offset= 0, degree_year= 2023, page_size= 20, degree_name= 'chemical_engineering', db=db, option_name="management_engineering_option", option_year= "2023", tag = "TE")
+# search_and_populate_courses(q= "", offset= 0, degree_year= 2023, page_size= 20, degree_name= 'chemical_engineering', db=db, option_name="management_sciences_option", option_year= "2023", tag = "elective")
+# get_degree_tags(degree_name="architectural_engineering", degree_year="2023", db=db)
+
