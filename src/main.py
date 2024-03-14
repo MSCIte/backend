@@ -135,11 +135,11 @@ def search_courses(degree_name: Annotated[str, "The degree name, e.g. 'managemen
                    q: str | None = None,
                    offset: Annotated[int | None, Query(title="Number of courses to offset the results from", ge=0)] = 0,
                    page_size: Annotated[int | None, Query(title="Number of results returned", gt=0, le=100)] = 20,
+                   tag: str | None = None,
                    db: Session = Depends(get_db)
                    ):
     courses = search_and_populate_courses(q=q, offset=offset, page_size=page_size, degree_name=degree_name,
-                                          degree_year=degree_year, db=db, option_name=option_name,
-                                          option_year=option_year)
+                                          degree_year=degree_year, db=db, option_name=option_name, option_year=option_year, tag=tag)
 
     return courses
 

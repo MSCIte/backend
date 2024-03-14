@@ -57,7 +57,6 @@ def merge_dicts(dict1, dict2):
     result = dict1.copy()
     for key, value in dict2.items():
         if key in result:
-            print("BITCH")
             result[key] = result[key].union(value)
         else:
             result[key] = value
@@ -266,29 +265,67 @@ def search_and_populate_courses(q: str,
                                 degree_name: str, 
                                 db: Session, 
                                 option_name: str = "", 
-                                option_year: str = ""
+                                option_year: str = "",
+                                tag: str = ""
                             ) -> (list)[CourseWithTagsSchema]:
     q = q.replace(" ", "")
-    courses = (
-    db.query(CourseModel)
-    .filter(
-        or_(
-            CourseModel.course_code.ilike(f'%{q}%'),
-            CourseModel.course_name.ilike(f'%{q}%'),
-            text("similarity(course_code, :query) > 0.19").params(query=q),
-            text("similarity(course_name, :query) > 0.19").params(query=q)
-        )
-    )
-    .order_by(
-        desc(text("similarity(course_code, :query)")).params(query=q), 
-        CourseModel.course_code,
-        desc(text("similarity(course_name, :query)")).params(query=q),
-        CourseModel.course_name
+    if tag:
+        course_list = []
+        deg_reqs_tag_filtered =  (
+        db.query(EngineeringDisciplineModel.discipline_name,
+                EngineeringDisciplineModel.course_codes,
+                EngineeringDisciplineModel.term).filter(
+            and_(
+                EngineeringDisciplineModel.discipline_name == degree_name,
+                EngineeringDisciplineModel.year == str(degree_year),
+                EngineeringDisciplineModel.term == tag
+            )
+        )).all()
         
-    )
-    .offset(offset)
-    .limit(page_size)
-    ).all()
+        for c in deg_reqs_tag_filtered:
+            course_list += c.course_codes.split(", ")
+        courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_list))
+        courses = (
+            courses.filter(
+            or_(
+                CourseModel.course_code.ilike(f'%{q}%'),
+                CourseModel.course_name.ilike(f'%{q}%'),
+                text("similarity(course_code, :query) > 0.19").params(query=q),
+                text("similarity(course_name, :query) > 0.19").params(query=q)
+            )
+        )
+        .order_by(
+            desc(text("similarity(course_code, :query)")).params(query=q), 
+            CourseModel.course_code,
+            desc(text("similarity(course_name, :query)")).params(query=q),
+            CourseModel.course_name
+            
+        )
+        .offset(offset)
+        .limit(page_size)
+        ).all()
+
+    else: 
+        courses = (
+        db.query(CourseModel)
+        .filter(
+            or_(
+                CourseModel.course_code.ilike(f'%{q}%'),
+                CourseModel.course_name.ilike(f'%{q}%'),
+                text("similarity(course_code, :query) > 0.19").params(query=q),
+                text("similarity(course_name, :query) > 0.19").params(query=q)
+            )
+        )
+        .order_by(
+            desc(text("similarity(course_code, :query)")).params(query=q), 
+            CourseModel.course_code,
+            desc(text("similarity(course_name, :query)")).params(query=q),
+            CourseModel.course_name
+            
+        )
+        .offset(offset)
+        .limit(page_size)
+        ).all()
 
     populate_courses_tags_search(degree_name=degree_name, year=str(degree_year), courses=courses, option_name=option_name, option_year=(option_year), db=db)
     return courses
@@ -458,3 +495,4 @@ def get_option_missing_reqs(option_id: str, year: str, courses_taken: CoursesTak
 # get_option_missing_reqs(option_id="management_sciences_option", courses_taken=courseCodesTaken, year="2023")
 
 # get_degree_reqs("systems_design_engineering", "2023", db)
+# search_and_populate_courses(q= "earth", offset= 0, degree_year= 2023, page_size= 20, degree_name= 'chemical_engineering', db=db, option_name="management_engineering_option", option_year= "2023", tag = "TE")
