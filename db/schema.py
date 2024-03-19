@@ -2,6 +2,10 @@ from enum import Enum
 
 from fastapi_camelcase import CamelModel
 
+class MinLevel(CamelModel):
+    max_level: str | None = ""
+    description: str | None = ""
+
 
 class CourseSchema(CamelModel):
     course_code: str
@@ -36,6 +40,7 @@ class TagSchema(CamelModel):
 
 
 class CourseWithTagsSchema(CourseSchema):
+    min_level: MinLevel | None 
     tags: list[TagSchema] = []
 
 

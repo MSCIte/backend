@@ -4,10 +4,10 @@ from functools import lru_cache
 
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, case, desc, func, or_, text
-from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel, SamplePathModel
+from db.models import EngineeringDisciplineModel, OptionsModel, EngineeringDisciplineModel, CourseModel, SamplePathModel, PrerequisiteModel
 from db.database import SessionLocal
 from db.schema import MissingList, MissingReqs, OptionsSchema, OptionRequirement, CoursesTakenIn, DegreeMissingReqs, \
-    AdditionalReqCount, SamplePath, DegreeReqs, DegreeRequirement, CourseWithTagsSchema, TagSchema
+    AdditionalReqCount, SamplePath, DegreeReqs, DegreeRequirement, CourseWithTagsSchema, TagSchema, MinLevel
 import re
 
 db = SessionLocal()
@@ -121,18 +121,27 @@ def get_degree_reqs(degree_name: str, year: str, db: Session) -> DegreeReqs:
 
 
 # @lru_cache()
-def populate_courses_tags(courses: list[CourseWithTagsSchema], courses_tag_dict: dict[str, set[str]]) -> None:
+def populate_courses_tags(courses: list[(CourseWithTagsSchema, str)], courses_tag_dict: dict[str, set[str]]) -> None:
     """
     Mutates the course object to include tags
     """
-    for course in courses:
+    courses_w_tags = []
+    for course_obj in courses:
+        course = course_obj[0]
+        min_level = course_obj[1]
+        print(min_level)
         tags = courses_tag_dict[course.course_code]
         course.tags = []
+        course.min_level = MinLevel(max_level="", description="")
         for tag in tags:
             course.tags.append(tag_name_to_object(tag))
-        
+        if min_level:
+            matches = re.match(r'{([^,]+),"([^"]+)"\}', min_level)
+            min_level_instance = MinLevel(max_level=matches[1], description=matches[2])
+            course.min_level = min_level_instance
+        courses_w_tags.append(course)
 
-
+    return courses_w_tags
 
 def tag_name_to_object(tag_name: str) -> TagSchema:
     # blue = mandatory major requirement
@@ -282,7 +291,6 @@ def search_and_populate_courses(q: str,
         )).all()
         
         if not tag_filtered:
-            print("HERE")
             tag_filtered = (
             db.query(OptionsModel.option_name,
                      OptionsModel.course_codes,
@@ -297,7 +305,8 @@ def search_and_populate_courses(q: str,
             
         for c in tag_filtered:
             course_list += c.course_codes.split(", ")
-        courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_list))
+
+        courses = db.query(CourseModel, PrerequisiteModel.min_level).outerjoin(CourseModel, PrerequisiteModel.course_id == CourseModel.id).filter(CourseModel.course_code.in_(course_list))
         courses = (
             courses.filter(
             or_(
@@ -320,7 +329,7 @@ def search_and_populate_courses(q: str,
 
     else: 
         courses = (
-        db.query(CourseModel)
+        db.query(CourseModel, PrerequisiteModel.min_level)
         .filter(
             or_(
                 CourseModel.course_code.ilike(f'%{q}%'),
@@ -329,6 +338,7 @@ def search_and_populate_courses(q: str,
                 text("similarity(course_name, :query) > 0.19").params(query=q)
             )
         )
+        .outerjoin(CourseModel, PrerequisiteModel.course_id == CourseModel.id)
         .order_by(
             desc(text("similarity(course_code, :query)")).params(query=q), 
             CourseModel.course_code,
@@ -339,16 +349,18 @@ def search_and_populate_courses(q: str,
         .offset(offset)
         .limit(page_size)
         ).all()
+    courses_w_tags = populate_courses_tags_search(degree_name=degree_name, year=str(degree_year), courses=courses, option_name=option_name, option_year=(option_year), db=db)
+    return courses_w_tags
 
-    populate_courses_tags_search(degree_name=degree_name, year=str(degree_year), courses=courses, option_name=option_name, option_year=(option_year), db=db)
-    return courses
-
-def populate_courses_tags_search(degree_name: str, year: str, courses: list[CourseWithTagsSchema], db: Session, option_name: str = "", 
+def populate_courses_tags_search(degree_name: str, year: str, courses: list[(CourseWithTagsSchema, str)], db: Session, option_name: str = "", 
                                 option_year: str = "") -> None:
     """
     Mutates the course object to include tags
     """
-    for course in courses:
+    courses_w_tags = []
+    for i, course_obj in enumerate(courses):
+        course = course_obj[0]
+        min_level = course_obj[1]
         tags = get_degree_tags(degree_name=degree_name, degree_year=year, db=db)
         if option_name and option_year:
             tags = merge_dicts(tags, get_option_tags(option_name, option_year, db))
@@ -356,7 +368,14 @@ def populate_courses_tags_search(degree_name: str, year: str, courses: list[Cour
         course_code_no_space = course.course_code.replace(" ", "")
         course_tags = tags[course_code_no_space] if course_code_no_space in tags else ['ELEC']
         course.tags = [tag_name_to_object(tag_name) for tag_name in course_tags]
+        course.min_level = MinLevel(max_level="", description="")
+        if min_level:
+            matches = re.match(r'{([^,]+),"([^"]+)"\}', min_level)
+            min_level_instance = MinLevel(max_level=matches[1], description=matches[2])
+            course.min_level = min_level_instance
 
+        courses_w_tags.append(course)
+    return courses_w_tags
 
 def get_degree_missing_reqs(degree_id: str, courses_taken: CoursesTakenIn, year: str, db: Session) -> DegreeMissingReqs:
     if (
@@ -543,4 +562,5 @@ def get_sample_paths(degree_name, db: Session):
 # get_degree_reqs("systems_design_engineering", "2023", db)
 # search_and_populate_courses(q= "", offset= 0, degree_year= 2023, page_size= 20, degree_name= 'chemical_engineering', db=db, option_name="management_sciences_option", option_year= "2023", tag = "elective")
 # get_degree_tags(degree_name="architectural_engineering", degree_year="2023", db=db)
+# populate_courses_tags()
 

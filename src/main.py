@@ -2,7 +2,7 @@ from typing import Annotated
 import requests
 from fastapi import FastAPI, Depends, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
-from db.models import CourseModel, EngineeringDisciplineModel
+from db.models import CourseModel, EngineeringDisciplineModel, PrerequisiteModel
 from db.schema import CourseWithTagsSchema, MissingReqs, OptionsSchema, CoursesTakenIn, OptionRequirement, DegreeMissingReqs, \
     DegreeReqs, DegreeMissingIn, RequirementsResult, SamplePath
 from collections import defaultdict
@@ -157,11 +157,10 @@ def tags(degree_name: Annotated[str, "The degree name, e.g. 'management_engineer
 
     course_codes_list = list(courses_dict.keys())
 
-    courses = db.query(CourseModel).filter(CourseModel.course_code.in_(course_codes_list)).all()
+    courses = db.query(CourseModel, PrerequisiteModel.min_level).outerjoin(CourseModel, PrerequisiteModel.course_id == CourseModel.id).filter(CourseModel.course_code.in_(course_codes_list)).all()
 
-    populate_courses_tags(courses=courses, courses_tag_dict=courses_dict)
-
-    return courses
+    courses_w_tags = populate_courses_tags(courses=courses, courses_tag_dict=courses_dict)
+    return courses_w_tags
 
 
 @app.get('/sample-path/{degree_name}', response_model=list[SamplePath])

@@ -4,6 +4,7 @@ from db.models import CourseModel, PrerequisiteModel, AntirequisiteModel, Engine
 from db.database import SessionLocal
 from sqlalchemy.orm import Session
 from course_parsing.requirements import load_prereqs, load_antireqs
+import re
 
 
 def add_courses_to_db(db: Session):
@@ -109,6 +110,48 @@ def add_degrees_to_db(db: Session):
         db.commit()
 
 
+def term_to_prereq_table(db: Session):
+    prereqs = db.query(PrerequisiteModel, CourseModel.course_code).join(CourseModel, PrerequisiteModel.course_id == CourseModel.id).all()
+    print("finished querying from psql")
+    for i, prereq in enumerate(prereqs):
+        course_code_split = re.split(r'(?<=[A-Z])(?=\d)', prereq[1], 1)
+        subject_code = course_code_split[0]
+        catalog_number = course_code_split[1]
+        print(subject_code, catalog_number)
+        with sqlite3.connect('./data/db.sqlite') as con:
+            cur = con.cursor()
+            cur.execute(
+                """
+                WITH RankedCourses AS (
+                SELECT
+                    requirementsDescription,
+                    ROW_NUMBER() OVER (PARTITION BY subjectCode, catalogNumber ORDER BY termCode DESC) AS rn
+                FROM courses
+                WHERE subjectCode = ? AND catalogNumber = ?
+                )
+                SELECT *
+                FROM RankedCourses
+                WHERE rn = 1;
+                """,
+                (subject_code, catalog_number)
+            )
+
+            for row in cur:
+                requirements_description = row[0]
+                matches = re.findall(r'\b(?:L|l)evel at least\b.*?(?:\.|$)', requirements_description)
+                if matches:
+                    match = matches[0]
+                    terms = re.findall(r'\b\d+[A-Z]\b', match)
+                    sorted_terms= sorted(terms, key=lambda x: (x[0], x[1]), reverse=True)
+                    min_level = [sorted_terms[0], match]
+                    print(min_level)
+                    prereq[0].min_level = min_level
+            if i % 500 == 0:
+                db.commit()
+    db.commit()             
+
+
 db = SessionLocal()
 # add_degrees_to_db(db)
-add_courses_to_db(db)
+# add_courses_to_db(db)
+term_to_prereq_table(db)
