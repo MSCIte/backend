@@ -462,6 +462,15 @@ def get_options_reqs(option_id: str, year: str, db: Session) -> OptionsSchema:
     return res
 
 
+def validate_course_used_for_before(missing_requirement_list: list[MissingList], course: any):
+    for requirement in missing_requirement_list:
+        
+        if course in requirement.courses and requirement.courses[course] == True:
+            return True
+    
+    return False
+
+
 def find_missing_requirements(course_list: list[str], requirements):
     missing_requirements = MissingReqs(lists=[])
 
@@ -470,7 +479,17 @@ def find_missing_requirements(course_list: list[str], requirements):
 
         # For each course in requirement that is in course_list, add to dictionary and assign value of True else False
         for course in requirement.courses:
+            course_taken_before = validate_course_used_for_before(missing_requirements.lists, course)
+            if course_taken_before:
+                continue
+            
             courses_dict[course] = course in course_list
+            if course in course_list:
+                course_list.remove(course)
+                if course == "MSCI211" and "MSCI311" in requirement.courses:
+                    requirement.courses.remove("MSCI311")
+            
+            
 
         # Calculate the total number of courses needed to complete the requirements
         total_courses_to_complete = requirement.number_of_courses
