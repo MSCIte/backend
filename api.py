@@ -160,7 +160,7 @@ def tag_name_to_object(tag_name: str) -> TagSchema:
         "4B": TagSchema(code='4B', color='blue', short_name='4B', long_name='4B'),
         "ATE": TagSchema(code='ATE', color='red', short_name='ATE', long_name='ATE'),
         "CSE": TagSchema(code='CSE', color='indigo', short_name='CSE', long_name='Complimentary Studies Elective'),
-        "ELEC": TagSchema(code='ELEC', color='green', short_name='ELEC', long_name='Elective'),
+        "ELEC": TagSchema(code='ELEC', color='pink', short_name='ELEC', long_name='Elective'),
         "ETHICS": TagSchema(code='ETHICS', color='purple', short_name='ETHICS', long_name='Ethics'),
         "LE": TagSchema(code='LE', color='yellow', short_name='LE', long_name='Linkage Electives'),
         "MLSTN": TagSchema(code='MLSTN', color='green', short_name='MLSTN', long_name='Milestone'),
